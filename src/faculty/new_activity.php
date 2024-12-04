@@ -1,8 +1,7 @@
 <?php
 
 session_start();
-
-include '../connect.php'; 
+include '../connect.php';
 
 $user_type = $_SESSION['user_type'];
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
@@ -16,7 +15,6 @@ if (isset($_SESSION['message'])) {
     unset($_SESSION['message']);
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $activity_name = $_POST['activity_name'];
     $description = $_POST['description'];
@@ -24,20 +22,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $time = $_POST['time'];
     $location = $_POST['location'];
 
-    $sql = "INSERT INTO activities (activity_name, description, date, time, location, section_id) VALUES ('$activity_name', '$description', '$date', '$time', '$location', '$section_id')";
+    // Insert into activities table
+    $sql = "INSERT INTO activities (activity_name, description, date, time, location, section_id) 
+            VALUES ('$activity_name', '$description', '$date', '$time', '$location', '$section_id')";
 
     if (mysqli_query($conn, $sql)) {
-        $_SESSION['message'] = "Activity added successfully.";
-        header("Location: ../activities.php?section_id=$section_id");
-        exit();
+        // Get the ID of the newly inserted activity
+        $activity_id = mysqli_insert_id($conn);
+
+        // Insert into documentation table with the same name
+        $doc_sql = "INSERT INTO documentation (activity_id, documentation_name) 
+                    VALUES ('$activity_id', '$activity_name')";
+        
+        if (mysqli_query($conn, $doc_sql)) {
+            $_SESSION['message'] = "Activity and documentation entry added successfully.";
+            header("Location: ../activities.php?section_id=$section_id");
+            exit();
+        } else {
+            $_SESSION['message'] = "Activity added, but failed to create documentation entry.";
+            header("Location: ./new_activity.php?section_id=$section_id");
+            exit();
+        }
     } else {
-        $_SESSION['message'] = "Failed to create new activity";
+        $_SESSION['message'] = "Failed to create new activity.";
         header("Location: ./new_activity.php?section_id=$section_id");
         exit();
     }
 }
+
+
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -62,7 +78,7 @@ $conn->close();
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 sm:ml-64">
+        <div class="mt-4 p-2 sm:ml-[210px]">
             <a href="../activities.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
@@ -71,7 +87,7 @@ $conn->close();
         <div class="flex h-screen">
         <?php include '../sidebar_faculty.php'; ?>
 
-            <div class="mx-auto w-full sm:w-[500px] md:w-[600px] h-[65vh] content-center flex-grow p-4 sm:ml-64">
+            <div class="mx-auto w-full sm:w-[500px] md:w-[600px] h-[65vh] content-center flex-grow p-4 sm:ml-[210px]">
                 <div class="mb-8">
                     <h1 class="text-center text-[40px]">Add new activity</h1>
                 </div>
@@ -121,19 +137,15 @@ $conn->close();
         const button = document.querySelector('[data-drawer-toggle="logo-sidebar"]');
         const sidebar = document.getElementById('logo-sidebar');
 
-        // Function to toggle the sidebar
         const toggleSidebar = () => {
             sidebar.classList.toggle('-translate-x-full');
         };
 
-        // Event listener for the hamburger button
         button.addEventListener('click', toggleSidebar);
 
-        // Event listener for clicks outside the sidebar
         document.addEventListener('click', (event) => {
-            // Check if the click is outside the sidebar and the button
             if (!sidebar.contains(event.target) && !button.contains(event.target)) {
-                sidebar.classList.add('-translate-x-full'); // Close the sidebar
+                sidebar.classList.add('-translate-x-full');
             }
         });
     </script>
@@ -141,12 +153,12 @@ $conn->close();
     <script>
         window.onload = function() {
             <?php if (!empty($message)): ?>
-                document.getElementById('messageModal').classList.remove('hidden'); // Show modal
+                document.getElementById('messageModal').classList.remove('hidden');
             <?php endif; ?>
         };
 
         function closeModal() {
-            document.getElementById('messageModal').classList.add('hidden'); // Hide modal
+            document.getElementById('messageModal').classList.add('hidden');
         }
     </script>
 

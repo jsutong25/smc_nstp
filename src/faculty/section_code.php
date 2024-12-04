@@ -34,17 +34,16 @@ if ($section_name === "All") {
     exit;
 }
 
-function generateUniqueCode($conn) {
+function generateUniqueCode($conn)
+{
     do {
-        // Using random_bytes and bin2hex to generate more randomness
-        $code = bin2hex(random_bytes(5)); // Generates a 10-character hexadecimal code
-        
-        // Check if the generated code already exists
+        $code = bin2hex(random_bytes(5));
+
         $check_sql = "SELECT code FROM section WHERE code = '$code'";
         $result = mysqli_query($conn, $check_sql);
-    } while (mysqli_num_rows($result) > 0); // Repeat until a unique code is generated
+    } while (mysqli_num_rows($result) > 0);
 
-    return strtoupper($code); // Convert to uppercase for better readability
+    return strtoupper($code);
 }
 
 $current_code_sql = "SELECT code FROM section WHERE section_id = $section_id";
@@ -52,18 +51,14 @@ $current_code_result = mysqli_query($conn, $current_code_sql);
 $current_code = mysqli_fetch_assoc($current_code_result)['code'] ?? null;
 
 if (isset($_POST['generate_code'])) {
-    // Ensure you retrieve the section_id from the posted form
     $section_id = mysqli_real_escape_string($conn, $_POST['section_id']);
     $new_code = generateUniqueCode($conn);
-    
-    // Update the section with the new code
+
     $update_sql = "UPDATE section SET code = '$new_code' WHERE section_id = '$section_id'";
-    
+
     if (mysqli_query($conn, $update_sql)) {
-        // Update the current code with the new code
-        $current_code = $new_code; // Update the variable to reflect the new code
+        $current_code = $new_code;
     } else {
-        // Handle error if needed (optional)
         echo "<script>alert('Error updating the code. Please try again.');</script>";
     }
 }
@@ -96,7 +91,7 @@ $result = mysqli_query($conn, $sql);
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 sm:ml-[230px]">
+        <div class="mt-4 p-2 sm:ml-[210px]">
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
@@ -106,15 +101,19 @@ $result = mysqli_query($conn, $sql);
             <?php include '../sidebar_faculty.php'; ?>
 
             <div class="mx-auto mt-10">
+                <p class="mt-4">
+                    Current Registration Code: 
+                </p>
+                <div class="border border-primary flex justify-center items-center mt-4 pb-5">
+                    <p class="mt-4 text-2xl"><?php echo $current_code ? $current_code : 'No registration code generated yet for this section.'; ?></p>
+                </div>
+
                 <form method="POST" class="mt-4">
                     <input type="hidden" name="section_id" value="<?php echo $section_id; ?>">
-                    <button type="submit" name="generate_code" class="bg-primary text-white p-2 mt-4">Generate New Code</button>
+                    <button type="submit" name="generate_code" class="bg-primary text-white p-2 mt-4 w-full text-center rounded-full px-2 py-2">Generate New Code</button>
                 </form>
 
-                <!-- Display the current code if it exists -->
-                <p class="mt-4">
-                    Current Registration Code: <strong><?php echo $current_code ? $current_code : 'No registration code generated yet for this section.'; ?></strong>
-                </p>
+
             </div>
 
         </div>
@@ -124,19 +123,15 @@ $result = mysqli_query($conn, $sql);
         const button = document.querySelector('[data-drawer-toggle="logo-sidebar"]');
         const sidebar = document.getElementById('logo-sidebar');
 
-        // Function to toggle the sidebar
         const toggleSidebar = () => {
             sidebar.classList.toggle('-translate-x-full');
         };
 
-        // Event listener for the hamburger button
         button.addEventListener('click', toggleSidebar);
 
-        // Event listener for clicks outside the sidebar
         document.addEventListener('click', (event) => {
-            // Check if the click is outside the sidebar and the button
             if (!sidebar.contains(event.target) && !button.contains(event.target)) {
-                sidebar.classList.add('-translate-x-full'); // Close the sidebar
+                sidebar.classList.add('-translate-x-full');
             }
         });
     </script>
@@ -144,12 +139,12 @@ $result = mysqli_query($conn, $sql);
     <script>
         window.onload = function() {
             <?php if (!empty($message)): ?>
-                document.getElementById('messageModal').classList.remove('hidden'); // Show modal
+                document.getElementById('messageModal').classList.remove('hidden');
             <?php endif; ?>
         };
 
         function closeModal() {
-            document.getElementById('messageModal').classList.add('hidden'); // Hide modal
+            document.getElementById('messageModal').classList.add('hidden');
         }
     </script>
 

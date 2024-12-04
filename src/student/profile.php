@@ -23,12 +23,10 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] != true) {
 if (isset($_GET['user_id'])) {
     $user_id = $_GET['user_id'];
 
-    // Fetch the activity details from the database
     $sql = "SELECT * FROM user WHERE user_id = '$user_id'";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) > 0) {
-        // Fetch the activity details
         $user = mysqli_fetch_assoc($result);
     } else {
         $_SESSION['message'] = "User not found.";
@@ -60,11 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (mysqli_query($conn, $sql)) {
         $_SESSION['message'] = "Profile updated successfully.";
-        header("Location: ./profile.php?section_id=$section_id&user_id=$user_id"); // Redirect with section_id
+        header("Location: ./profile.php?section_id=$section_id&user_id=$user_id");
         exit();
     } else {
         $_SESSION['message'] = "Failed to update profile.";
-        header("Location: ./profile.php?section_id=$section_id&user_id=$user_id"); // Include section_id on error as well
+        header("Location: ./profile.php?section_id=$section_id&user_id=$user_id");
         exit();
     }
 }
@@ -103,7 +101,7 @@ $_SESSION['last_activity'] = time();
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 flex-grow sm:ml-64">
+        <div class="mt-4 p-2 flex-grow sm:ml-[210px]">
             <a href="./student_home.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
@@ -112,7 +110,7 @@ $_SESSION['last_activity'] = time();
         <div class="flex h-full w-full">
             <?php include '../sidebar_student.php'; ?>
 
-            <div class="flex-grow p-4 sm:ml-64 md:ml-52 lg:ml-64 overflow-hidden max-w-full">
+            <div class="flex-grow p-4 sm:ml-64 md:ml-52 lg:ml-[210px] overflow-hidden max-w-full">
                 <h1 class="text-[22px] mb-8">Profile</h1>
 
                 <div class="w-full">
@@ -200,19 +198,15 @@ $_SESSION['last_activity'] = time();
         const button = document.querySelector('[data-drawer-toggle="logo-sidebar"]');
         const sidebar = document.getElementById('logo-sidebar');
 
-        // Function to toggle the sidebar
         const toggleSidebar = () => {
             sidebar.classList.toggle('-translate-x-full');
         };
 
-        // Event listener for the hamburger button
         button.addEventListener('click', toggleSidebar);
 
-        // Event listener for clicks outside the sidebar
         document.addEventListener('click', (event) => {
-            // Check if the click is outside the sidebar and the button
             if (!sidebar.contains(event.target) && !button.contains(event.target)) {
-                sidebar.classList.add('-translate-x-full'); // Close the sidebar
+                sidebar.classList.add('-translate-x-full');
             }
         });
     </script>
@@ -220,12 +214,12 @@ $_SESSION['last_activity'] = time();
     <script>
         window.onload = function() {
             <?php if (!empty($message)): ?>
-                document.getElementById('messageModal').classList.remove('hidden'); // Show modal
+                document.getElementById('messageModal').classList.remove('hidden');
             <?php endif; ?>
         };
 
         function closeModal() {
-            document.getElementById('messageModal').classList.add('hidden'); // Hide modal
+            document.getElementById('messageModal').classList.add('hidden');
         }
     </script>
 </body>

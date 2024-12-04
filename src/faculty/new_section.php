@@ -10,28 +10,25 @@ if ($user_type == 'student') {
     header("Location: ../student/student_home.php?section_id=$section_id");
 }
 
-// Check for any session messages
 if (isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
     unset($_SESSION['message']);
 }
 
-// Handle form submission for creating a new section
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $section_name = $_POST['section_name'];
     $schedule = $_POST['schedule'];
-    $faculty_id = intval($_POST['faculty_id']); // Sanitize faculty ID
+    $faculty_id = intval($_POST['faculty_id']);
 
-    // Insert the new section into the database
     $sql_insert = "INSERT INTO section (section_name, schedule, faculty_id) VALUES ('$section_name', '$schedule', '$faculty_id')";
 
     if (mysqli_query($conn, $sql_insert)) {
         $_SESSION['message'] = "New section created successfully.";
-        header("Location: sections.php"); // Redirect to sections page
+        header("Location: ./sections.php");
         exit();
     } else {
         $_SESSION['message'] = "Failed to create section: " . mysqli_error($conn);
-        header("Location: create_section.php"); // Redirect back to the form
+        header("Location: ./new_section.php");
         exit();
     }
 }
@@ -65,7 +62,7 @@ $conn->close();
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 sm:ml-64">
+        <div class="mt-4 p-2 sm:ml-[210px]">
             <a href="../activities.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
@@ -74,7 +71,7 @@ $conn->close();
         <div class="flex h-screen">
             <?php include '../sidebar_faculty.php'; ?>
 
-            <div class="mx-auto w-full sm:w-[500px] md:w-[600px] h-[65vh] content-center flex-grow p-4 sm:ml-64">
+            <div class="mx-auto w-full sm:w-[500px] md:w-[600px] h-[65vh] content-center flex-grow p-4 sm:ml-[210px]">
                 <div class="mb-8">
                     <h1 class="text-center text-[40px]">Add new section</h1>
                 </div>
@@ -126,19 +123,15 @@ $conn->close();
         const button = document.querySelector('[data-drawer-toggle="logo-sidebar"]');
         const sidebar = document.getElementById('logo-sidebar');
 
-        // Function to toggle the sidebar
         const toggleSidebar = () => {
             sidebar.classList.toggle('-translate-x-full');
         };
 
-        // Event listener for the hamburger button
         button.addEventListener('click', toggleSidebar);
 
-        // Event listener for clicks outside the sidebar
         document.addEventListener('click', (event) => {
-            // Check if the click is outside the sidebar and the button
             if (!sidebar.contains(event.target) && !button.contains(event.target)) {
-                sidebar.classList.add('-translate-x-full'); // Close the sidebar
+                sidebar.classList.add('-translate-x-full');
             }
         });
     </script>
@@ -146,12 +139,12 @@ $conn->close();
     <script>
         window.onload = function() {
             <?php if (!empty($message)): ?>
-                document.getElementById('messageModal').classList.remove('hidden'); // Show modal
+                document.getElementById('messageModal').classList.remove('hidden');
             <?php endif; ?>
         };
 
         function closeModal() {
-            document.getElementById('messageModal').classList.add('hidden'); // Hide modal
+            document.getElementById('messageModal').classList.add('hidden');
         }
     </script>
 
