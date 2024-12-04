@@ -46,8 +46,14 @@ $sections_result = $stmt->get_result();
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
 
 if ($section_id) {
-    
-    $activities_sql = "SELECT * FROM activities WHERE section_id = ? AND CONCAT(date, ' ', time) > NOW() ORDER BY date, time ASC";
+    // Adjust the SQL to include the documentation_id
+    $activities_sql = "
+        SELECT a.*, d.documentation_id
+        FROM activities a
+        LEFT JOIN documentation d ON a.activity_id = d.activity_id
+        WHERE a.section_id = ? AND CONCAT(a.date, ' ', a.time) > NOW()
+        ORDER BY a.date, a.time ASC";
+
     $stmt = $conn->prepare($activities_sql);
     if ($stmt) {
         $stmt->bind_param("i", $section_id);
@@ -59,28 +65,10 @@ if ($section_id) {
     } else {
         echo "Query preparation failed: " . $conn->error;
     }
-
-    
-    $documentation_sql = "SELECT * FROM documentation WHERE section_id = ? ORDER BY created_at ASC";
-    $stmt = $conn->prepare($documentation_sql);
-    if ($stmt) {
-        $stmt->bind_param("i", $section_id);
-        if ($stmt->execute()) {
-            $documentation_result = $stmt->get_result();
-        } else {
-            echo "Query execution failed: " . $stmt->error;
-        }
-    } else {
-        echo "Query preparation failed: " . $conn->error;
-    }
 }
 
 $sql = "SELECT * FROM activities WHERE CONCAT(date, ' ', time) > NOW() ORDER by date, time ASC";
 $result = mysqli_query($conn, $sql);
-
-$sql2 = "SELECT * FROM documentation ORDER by created_at ASC";
-$result2 = mysqli_query($conn, $sql2);
-
 
 $_SESSION['last_activity'] = time();
 
@@ -101,7 +89,7 @@ $_SESSION['last_activity'] = time();
         <div class="flex flex-row items-center gap-2 w-full md:hidden">
             <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                 <span class="sr-only">Open sidebar</span>
-                <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http:
+                <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
                 </svg>
             </button>
@@ -113,7 +101,7 @@ $_SESSION['last_activity'] = time();
 
             <!-- Faculty View -->
             <?php if ($_SESSION['user_type'] == 'faculty'): ?>
-                <div class="flex-grow p-4 sm:ml-64 md:ml-52 lg:ml-64 overflow-hidden max-w-full">
+                <div class="flex-grow p-4 sm:ml-64 md:ml-52 lg:ml-[210px] overflow-hidden max-w-full">
                     <h1 class="text-[22px] mb-8">Faculty</h1>
 
                     <div class="flex space-x-4 mb-8 overflow-hidden">
@@ -181,7 +169,8 @@ $_SESSION['last_activity'] = time();
                                             <div class="w-1.5 h-auto bg-gray-500"></div>
 
                                             <!-- Activity name and description -->
-                                            <a class="transition ease-linear hover:bg-gray-400 hover:bg-opacity-15 w-full sm:w-12 md:w-fit lg:w-full mx-8 ml-5" href="../view_activity.php?activity_id=<?php echo $row['activity_id']; ?>&section_id=<?php echo $section_id; ?>">
+                                            <a class="flex-1 transition ease-linear hover:bg-gray-400 hover:bg-opacity-15 mx-2 sm:mx-8 w-full"
+                                                    href="../view_activity.php?activity_id=<?php echo $row['activity_id']; ?>&section_id=<?php echo $section_id; ?>&documentation_id=<?php echo $row['documentation_id']; ?>">
                                                 <div class="flex-1">
                                                     <!-- Title: show full on larger screens and truncated on mobile -->
                                                     <h5 class="block md:hidden"><?php echo $short_title; ?></h5>
@@ -208,111 +197,6 @@ $_SESSION['last_activity'] = time();
                         </div>
                         <!-- <a class="transition ease-in-out hover:text-primary hover:underline text-sm" href="">More activities...</a> -->
                     </div>
-
-                    <!-- Documentation -->
-                    <div class="pt-5">
-                        <div class="flex justify-between items-center mt-8 mb-8">
-                            <h2 class="text-[18px] hover:text-gray-400"><a href="../documentation.php?section_id=<?php echo $section_id; ?>">Documentation</a></h2>
-                            <a href="./new_documentation.php?section_id=<?php echo $section_id; ?>">
-                                <svg class="transition-colors hover:text-primary ease-in-out" xmlns="http:
-                                    <path fill="currentColor" d="M8 15c-3.86 0-7-3.14-7-7s3.14-7 7-7s7 3.14 7 7s-3.14 7-7 7ZM8 2C4.69 2 2 4.69 2 8s2.69 6 6 6s6-2.69 6-6s-2.69-6-6-6Z" />
-                                    <path fill="currentColor" d="M8 11.5c-.28 0-.5-.22-.5-.5V5c0-.28.22-.5.5-.5s.5.22.5.5v6c0 .28-.22.5-.5.5Z" />
-                                    <path fill="currentColor" d="M11 8.5H5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5h6c.28 0 .5.22.5.5s-.22.5-.5.5Z" />
-                                </svg>
-                            </a>
-                        </div>
-
-                        <div class="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                            <?php
-                            
-                            $sql_sections = "SELECT section_id, section_name FROM section WHERE faculty_id = ?";
-                            $stmt = $conn->prepare($sql_sections);
-                            $stmt->bind_param("i", $faculty_id);
-                            $stmt->execute();
-                            $sections_result = $stmt->get_result();
-
-                            $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
-
-                            
-                            if ($section_id) {
-                                
-                                $documentation_sql = "SELECT d.documentation_id, d.documentation_name, s.section_name 
-                              FROM documentation d
-                              LEFT JOIN section s ON d.section_id = s.section_id 
-                              WHERE d.section_id = ? 
-                              ORDER BY d.created_at ASC"; 
-
-                                $stmt = $conn->prepare($documentation_sql);
-                                if ($stmt) {
-                                    $stmt->bind_param("i", $section_id);
-                                    if ($stmt->execute()) {
-                                        $documentation_result = $stmt->get_result();
-                                    } else {
-                                        echo "Query execution failed: " . $stmt->error;
-                                    }
-                                } else {
-                                    echo "Query preparation failed: " . $conn->error;
-                                }
-                            } else {
-                                echo "<p class='italic text-center text-[16px] mt-4'>Select a section first.</p>";
-                            }
-
-                            
-                            if (isset($documentation_result) && $documentation_result !== null) {
-                                
-                                if (mysqli_num_rows($documentation_result) > 0) {
-                                    while ($row = mysqli_fetch_assoc($documentation_result)) {
-                                        $album_name = urlencode($row['documentation_name']);
-                                        $album_id = $row['documentation_id'];
-
-                                        
-                                        $section_name = isset($row['section_name']) ? $row['section_name'] : 'Unknown Section';
-                                        $current_year = date('Y');
-
-                                        
-                                        $sql_thumbnail = "SELECT image FROM images WHERE documentation_id = ? LIMIT 1"; 
-                                        $thumbnail_stmt = $conn->prepare($sql_thumbnail);
-                                        $thumbnail_stmt->bind_param("i", $album_id);
-                                        $thumbnail_stmt->execute();
-                                        $result_thumbnail = $thumbnail_stmt->get_result();
-                                        $thumbnail = null;
-
-                                        if ($result_thumbnail && mysqli_num_rows($result_thumbnail) > 0) {
-                                            $row_thumbnail = mysqli_fetch_assoc($result_thumbnail);
-                                            $thumbnail = '.' . $row_thumbnail['image']; 
-                                        }
-
-                                        
-                                        $upload_dir = "./uploads/" . $current_year . "/" . $row['documentation_name'] . "-" . $section_name;
-                            ?>
-                                        <div class="w-[100px] md:w-[120px] lg:w-[150px] xl:w-[180px]">
-                                            <a href="../view_album.php?documentation_id=<?php echo $row['documentation_id']; ?>&section_id=<?php echo $section_id; ?>">
-                                                <div class="bg-white w-[100px] h-[100px] md:w-[120px] md:h-[120px] lg:w-[150px] lg:h-[150px] xl:w-[180px] xl:h-[180px]">
-                                                    <?php if ($thumbnail): ?>
-                                                        <img src="<?php echo $thumbnail; ?>" alt="Album Thumbnail" class="w-full h-full object-cover">
-                                                    <?php else: ?>
-                                                        <div class="flex h-full justify-center items-center mx-2 z-10">
-                                                            <span class="text-subtext text-[12px] lg:text-[20px]">View album</span>
-                                                        </div>
-                                                    <?php endif; ?>
-                                                </div>
-                                                <div class="">
-                                                    <p class="lg:text-[20px]"><?php echo $row['documentation_name']; ?></p>
-                                                </div>
-                                            </a>
-                                        </div>
-                            <?php
-                                    }
-                                } else {
-                                    echo "<p class='italic text-center text-[16px] mt-4'>No documentation available for this section.</p>";
-                                }
-                            }
-                            ?>
-                        </div>
-
-
-                    </div>
-                </div>
 
                 <!-- NSTP Coordinator View -->
             <?php elseif ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
