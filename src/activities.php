@@ -28,7 +28,7 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
 $activities_result = null;
 $documentation_result = null;
 
-$sql_sections = "SELECT section_id, section_name FROM section WHERE faculty_id = ?";
+$sql_sections = "SELECT section_id, section_name FROM section WHERE faculty_id = ? OR section_name ='All' ORDER BY CASE WHEN section_name ='All' THEN 0 ELSE 1 END, section_name ASC";
 $stmt = $conn->prepare($sql_sections);
 $stmt->bind_param("i", $faculty_id);
 $stmt->execute();
@@ -37,8 +37,14 @@ $sections_result = $stmt->get_result();
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
 
 if ($section_id) {
-    // Prepare query for activities related to the selected section
-    $activities_sql = "SELECT * FROM activities WHERE section_id = ? AND CONCAT(date, ' ', time) > NOW() ORDER BY date, time ASC";
+    // Adjust the SQL to include the documentation_id
+    $activities_sql = "
+        SELECT a.*, d.documentation_id
+        FROM activities a
+        LEFT JOIN documentation d ON a.activity_id = d.activity_id
+        WHERE a.section_id = ? AND CONCAT(a.date, ' ', a.time) > NOW()
+        ORDER BY a.date, a.time ASC";
+
     $stmt = $conn->prepare($activities_sql);
     if ($stmt) {
         $stmt->bind_param("i", $section_id);
@@ -50,27 +56,12 @@ if ($section_id) {
     } else {
         echo "Query preparation failed: " . $conn->error;
     }
-
-    // Prepare query for documentation related to the selected section
-    $documentation_sql = "SELECT * FROM documentation WHERE section_id = ? ORDER BY created_at ASC";
-    $stmt = $conn->prepare($documentation_sql);
-    if ($stmt) {
-        $stmt->bind_param("i", $section_id);
-        if ($stmt->execute()) {
-            $documentation_result = $stmt->get_result();
-        } else {
-            echo "Query execution failed: " . $stmt->error;
-        }
-    } else {
-        echo "Query preparation failed: " . $conn->error;
-    }
 }
 
-// Handle activity deletion
+// Handle activity deletion as before
 if (isset($_POST['delete_activity'])) {
     $activity_id = intval($_POST['activity_id']);
 
-    // Delete activity from the database
     $sql_delete_activity = "DELETE FROM activities WHERE activity_id = $activity_id";
 
     if (mysqli_query($conn, $sql_delete_activity)) {
@@ -79,7 +70,7 @@ if (isset($_POST['delete_activity'])) {
         $_SESSION['message'] = "Failed to delete the activity.";
     }
 
-    header("Location: ./activities.php?section_id=$section_id"); // Adjust the redirect to your manage activities page
+    header("Location: ./activities.php?section_id=$section_id");
     exit();
 }
 
@@ -113,48 +104,48 @@ $_SESSION['last_activity'] = time();
             <a href="./faculty/faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 flex-grow sm:ml-64">
+        <div class="mt-4 p-2 flex-grow sm:ml-[210px]">
             <?php if ($_SESSION['user_type'] == 'nstp_coordinator' || $_SESSION['user_type'] == 'faculty'): ?>
-            <a href="./faculty/faculty_home.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
-                    <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
-                </svg></a>
+                <a href="./faculty/faculty_home.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
+                        <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
+                    </svg></a>
             <?php else: ?>
                 <a href="./student/student_home.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
-                    <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
-                </svg></a>
-            <?php endif; ?> 
+                        <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
+                    </svg></a>
+            <?php endif; ?>
         </div>
 
         <div class="flex h-screen w-full">
-        <?php if ($_SESSION['user_type'] == 'nstp_coordinator' || $_SESSION['user_type'] == 'faculty'): ?>
+            <?php if ($_SESSION['user_type'] == 'nstp_coordinator' || $_SESSION['user_type'] == 'faculty'): ?>
                 <?php include './sidebar_faculty-src.php'; ?>
             <?php else: ?>
                 <?php include './sidebar_student-src.php'; ?>
             <?php endif; ?>
 
-            <div class="flex-grow p-4 sm:ml-64">
+            <div class="flex-grow p-4 sm:ml-[210px]">
 
                 <!-- Upcoming activities -->
                 <div class="w-full">
                     <div class="flex justify-between items-center">
                         <h2 class="text-[24px]">Upcoming Activities</h2>
                         <?php if ($_SESSION['user_type'] == 'nstp_coordinator' || $_SESSION['user_type'] == 'faculty'): ?>
-                        <a class="text-subtext hover:text-primary underline" href="./history_activities.php">History</a>
+                            <a class="text-subtext hover:text-primary underline" href="./history_activities.php">History</a>
                         <?php endif; ?>
                     </div>
 
                     <?php if ($_SESSION['user_type'] == 'nstp_coordinator' || $_SESSION['user_type'] == 'faculty'): ?>
-                    <div class="mx-auto w-full flex mb-8 gap-1">
-                        <a class="bg-primary py-3 text-center w-full rounded-full mt-8 hover:cursor-pointer hover:bg-red-700 flex items-center justify-center" href="./faculty/new_activity.php?section_id=<?php echo $section_id; ?>">
-                            <svg class="transition ease-linear duration-200 hover:text-primary mr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
-                                    <path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z" />
-                                    <path d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z" />
-                                </g>
-                            </svg>
-                            Add new activity
-                        </a>
-                    </div>
+                        <div class="mx-auto w-full flex mb-8 gap-1">
+                            <a class="bg-primary py-3 text-center w-full rounded-full mt-8 hover:cursor-pointer hover:bg-red-700 flex items-center justify-center" href="./faculty/new_activity.php?section_id=<?php echo $section_id; ?>">
+                                <svg class="transition ease-linear duration-200 hover:text-primary mr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                    <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                        <path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z" />
+                                        <path d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z" />
+                                    </g>
+                                </svg>
+                                Add new activity
+                            </a>
+                        </div>
 
                     <?php endif; ?>
 
@@ -178,25 +169,20 @@ $_SESSION['last_activity'] = time();
                         ?>
                                     <div class="flex flex-col gap-1 mb-4">
                                         <div class="flex flex-col sm:flex-row justify-between items-start w-full">
-                                            <!-- Left side: Date and time, Activity name and description -->
                                             <div class="flex gap-4 w-full sm:w-auto">
-                                                <!-- Date and time section -->
                                                 <div class="w-[100px] flex flex-col text-subtext items-start">
                                                     <p><?php echo $formatted_date; ?></p>
                                                     <p><?php echo $formatted_time; ?></p>
                                                 </div>
 
-                                                <!-- Vertical separator -->
                                                 <div class="hidden sm:block w-1.5 h-auto bg-gray-500"></div>
 
-                                                <!-- Activity name and description -->
-                                                <a class="flex-1 transition ease-linear hover:bg-gray-400 hover:bg-opacity-15 mx-2 sm:mx-8 w-full" href="./view_activity.php?activity_id=<?php echo $row['activity_id']; ?>&section_id=<?php echo $section_id; ?>">
+                                                <a class="flex-1 transition ease-linear hover:bg-gray-400 hover:bg-opacity-15 mx-2 sm:mx-8 w-full"
+                                                    href="./view_activity.php?activity_id=<?php echo $row['activity_id']; ?>&section_id=<?php echo $section_id; ?>&documentation_id=<?php echo $row['documentation_id']; ?>">
                                                     <div>
-                                                        <!-- Title: show full on larger screens and truncated on mobile -->
                                                         <h5 class="block md:hidden"><?php echo $short_title; ?></h5>
                                                         <h5 class="hidden md:block"><?php echo $activity_name; ?></h5>
 
-                                                        <!-- Description: truncated on mobile, full text for large screens -->
                                                         <p class="block md:hidden text-subtext"><?php echo $short_description; ?></p>
                                                         <p class="hidden md:block text-subtext">
                                                             <?php echo (strlen($description) > 100) ? substr($description, 0, 100) . '...' : $description; ?>
@@ -206,17 +192,19 @@ $_SESSION['last_activity'] = time();
                                             </div>
 
                                             <?php if ($_SESSION['user_type'] == 'nstp_coordinator' || $_SESSION['user_type'] == 'faculty'): ?>
-                                            <div class="flex gap-2 md:gap-4 mt-4 sm:mt-0">
-                                                <!-- Edit Button -->
-                                                <a class="bg-yellow-400 text-white px-4 py-2 rounded hover:bg-yellow-500 transition inline-block text-center" href="./faculty/edit_activity.php?activity_id=<?php echo $row['activity_id']; ?>&section_id=<?php echo $section_id; ?>" style='min-width: 80px; display: inline-block;'>Edit</a>
+                                                <div class="flex gap-2 md:gap-4 mt-4 sm:mt-0">
+                                                    <a class="bg-yellow-400 text-white px-4 py-2 rounded hover:bg-yellow-500 transition inline-block text-center"
+                                                        href="./faculty/edit_activity.php?activity_id=<?php echo $row['activity_id']; ?>&section_id=<?php echo $section_id; ?>"
+                                                        style='min-width: 80px; display: inline-block;'>Edit</a>
 
-                                                <!-- Delete Button -->
-                                                <form method="POST" style="display:inline;">
-                                                    <input type="hidden" name="activity_id" value="<?php echo $row['activity_id']; ?>">
-                                                    <input type="hidden" name="delete_activity" value="1">
-                                                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition" style='min-width: 80px; display: inline-block; text-align: center;' onclick="return confirm('Are you sure you want to delete this activity?');">Delete</button>
-                                                </form>
-                                            </div>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="activity_id" value="<?php echo $row['activity_id']; ?>">
+                                                        <input type="hidden" name="delete_activity" value="1">
+                                                        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+                                                            style='min-width: 80px; display: inline-block; text-align: center;'
+                                                            onclick="return confirm('Are you sure you want to delete this activity?');">Delete</button>
+                                                    </form>
+                                                </div>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -224,11 +212,9 @@ $_SESSION['last_activity'] = time();
                                     $counter++;
                                 }
                             } else {
-                                // If there are no rows returned
                                 echo "<p class='italic text-center text-[16px] mt-4'>No upcoming activities</p>";
                             }
                         } else {
-                            // If $activities_result is null (e.g., no section is selected yet)
                             echo "<p class='italic text-center text-[16px]'>Select a section first.</p>";
                         }
                         ?>
@@ -253,19 +239,15 @@ $_SESSION['last_activity'] = time();
         const button = document.querySelector('[data-drawer-toggle="logo-sidebar"]');
         const sidebar = document.getElementById('logo-sidebar');
 
-        // Function to toggle the sidebar
         const toggleSidebar = () => {
             sidebar.classList.toggle('-translate-x-full');
         };
 
-        // Event listener for the hamburger button
         button.addEventListener('click', toggleSidebar);
 
-        // Event listener for clicks outside the sidebar
         document.addEventListener('click', (event) => {
-            // Check if the click is outside the sidebar and the button
             if (!sidebar.contains(event.target) && !button.contains(event.target)) {
-                sidebar.classList.add('-translate-x-full'); // Close the sidebar
+                sidebar.classList.add('-translate-x-full');
             }
         });
     </script>
@@ -273,12 +255,12 @@ $_SESSION['last_activity'] = time();
     <script>
         window.onload = function() {
             <?php if (!empty($message)): ?>
-                document.getElementById('messageModal').classList.remove('hidden'); // Show modal
+                document.getElementById('messageModal').classList.remove('hidden');
             <?php endif; ?>
         };
 
         function closeModal() {
-            document.getElementById('messageModal').classList.add('hidden'); // Hide modal
+            document.getElementById('messageModal').classList.add('hidden');
         }
     </script>
 </body>

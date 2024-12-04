@@ -55,12 +55,9 @@
                 </a>
             </li>
             <li>
-                <a href="../documentation.php?section_id=<?php echo $section_id; ?>" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                    <svg class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 512 512">
-                        <path fill="currentColor" d="M16 496h480V16H16Zm448-32h-25.373l-104-104l54.912-54.911L464 379.55ZM48 48h416v286.3l-74.461-74.461L312 337.373l-112-112l-152 152Zm0 374.627l152-152L393.373 464H48Z" />
-                        <path fill="currentColor" d="M120 80H80v40a40 40 0 0 0 40-40Zm-40 83.661V196.6A152.468 152.468 0 0 0 196.6 80h-32.939A120.471 120.471 0 0 1 80 163.661Z" />
-                    </svg>
-                    <span class="ms-3">Documentation</span>
+                <a href="./archived_classes.php?section_id=<?php echo $section_id; ?>" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                <svg class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 512 512"><path fill="currentColor" d="M474.444 19.857a20.336 20.336 0 0 0-21.592-2.781L33.737 213.8v38.066l176.037 70.414L322.69 496h38.074l120.3-455.4a20.342 20.342 0 0 0-6.62-20.743ZM337.257 459.693L240.2 310.37l149.353-163.582l-23.631-21.576L215.4 290.069L70.257 232.012L443.7 56.72Z"/></svg>
+                    <span class="ms-3">Archived</span>
                 </a>
             </li>
             <li>

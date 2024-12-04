@@ -173,7 +173,7 @@ $_SESSION['last_activity'] = time();
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 sm:ml-64">
+        <div class="mt-4 p-2 sm:ml-[210px]">
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
@@ -182,7 +182,7 @@ $_SESSION['last_activity'] = time();
         <div class="flex h-screen w-full">
         <?php include '../sidebar_faculty.php'; ?>
 
-            <div class="flex-grow p-4 sm:ml-64">
+            <div class="flex-grow p-4 sm:ml-[210px]">
 
                 <!-- Documentation -->
                 <div class="h-full">
@@ -210,9 +210,6 @@ $_SESSION['last_activity'] = time();
                             </thead>
                             <tbody>
                                 <?php
-                                // // Fetch data from the NSTP sign-up table
-                                // $sql = "SELECT * FROM user WHERE user_type = 'faculty'"; // Adjust this query as needed
-                                // $result = $conn->query($sql);
 
                                 if ($sections_result->num_rows > 0) {
                                     while ($row = $sections_result->fetch_assoc()) {
@@ -282,19 +279,15 @@ $_SESSION['last_activity'] = time();
         const button = document.querySelector('[data-drawer-toggle="logo-sidebar"]');
         const sidebar = document.getElementById('logo-sidebar');
 
-        // Function to toggle the sidebar
         const toggleSidebar = () => {
             sidebar.classList.toggle('-translate-x-full');
         };
 
-        // Event listener for the hamburger button
         button.addEventListener('click', toggleSidebar);
 
-        // Event listener for clicks outside the sidebar
         document.addEventListener('click', (event) => {
-            // Check if the click is outside the sidebar and the button
             if (!sidebar.contains(event.target) && !button.contains(event.target)) {
-                sidebar.classList.add('-translate-x-full'); // Close the sidebar
+                sidebar.classList.add('-translate-x-full');
             }
         });
     </script>
@@ -302,12 +295,12 @@ $_SESSION['last_activity'] = time();
     <script>
         window.onload = function() {
             <?php if (!empty($message)): ?>
-                document.getElementById('messageModal').classList.remove('hidden'); // Show modal
+                document.getElementById('messageModal').classList.remove('hidden');
             <?php endif; ?>
         };
 
         function closeModal() {
-            document.getElementById('messageModal').classList.add('hidden'); // Hide modal
+            document.getElementById('messageModal').classList.add('hidden');
         }
     </script>
 </body>
