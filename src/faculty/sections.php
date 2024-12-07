@@ -6,6 +6,7 @@ $message = "";
 
 $timeout_duration = 3600;
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
+$user_type = $_SESSION['user_type'];
 
 if ($user_type == 'student') {
     header("Location: ../student/student_home.php?section_id=$section_id");
@@ -38,12 +39,11 @@ $sections_result = $stmt->get_result();
 
 
 if (isset($_POST['delete_section'])) {
-    $section_id_to_delete = intval($_POST['section_id_to_delete']); // Get the correct section_id from the form
+    $section_id_to_delete = intval($_POST['section_id_to_delete']);
 
-    // Use a prepared statement to delete the section
     $sql_delete_section = "DELETE FROM section WHERE section_id = ?";
     $stmt = $conn->prepare($sql_delete_section);
-    $stmt->bind_param("i", $section_id_to_delete); // Bind the section_id from the form
+    $stmt->bind_param("i", $section_id_to_delete);
 
     if ($stmt->execute()) {
         $_SESSION['message'] = "Section deleted successfully.";
@@ -53,7 +53,6 @@ if (isset($_POST['delete_section'])) {
 
     $stmt->close();
 
-    // Redirect after deletion
     header("Location: ./sections.php?section_id=<?php echo $section_id; ?>");
     exit();
 }
@@ -189,7 +188,7 @@ $_SESSION['last_activity'] = time();
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 sm:ml-64">
+        <div class="mt-4 p-2 sm:ml-[210px]">
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
@@ -198,7 +197,7 @@ $_SESSION['last_activity'] = time();
         <div class="flex h-screen w-full">
             <?php include '../sidebar_faculty.php'; ?>
 
-            <div class="flex-grow p-4 sm:ml-64">
+            <div class="flex-grow p-4 sm:ml-[210px]">
 
                 <div class="h-full">
                     <div class="">
@@ -230,7 +229,6 @@ $_SESSION['last_activity'] = time();
                             <tbody>
                                 <?php
                                 if ($sections_result->num_rows > 0) {
-                                    // Output data of each row
                                     while ($row = $sections_result->fetch_assoc()) {
                                         echo "<tr>
                                                 <td>{$row['section_name']}</td>

@@ -588,6 +588,12 @@ video {
   }
 }
 
+@media (min-width: 1688px) {
+  .container {
+    max-width: 1688px;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -598,6 +604,10 @@ video {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+.static {
+  position: static;
 }
 
 .fixed {
@@ -740,6 +750,10 @@ video {
   display: inline-block;
 }
 
+.inline {
+  display: inline;
+}
+
 .flex {
   display: flex;
 }
@@ -832,6 +846,11 @@ video {
   width: 100px;
 }
 
+.w-fit {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .w-full {
   width: 100%;
 }
@@ -873,10 +892,6 @@ video {
 
 .grid-cols-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.grid-cols-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .flex-row {
@@ -921,10 +936,6 @@ video {
 
 .gap-4 {
   gap: 1rem;
-}
-
-.gap-5 {
-  gap: 1.25rem;
 }
 
 .space-x-4 > :not([hidden]) ~ :not([hidden]) {
@@ -995,6 +1006,16 @@ video {
   border-width: 2px;
 }
 
+.border-gray-900 {
+  --tw-border-opacity: 1;
+  border-color: rgb(17 24 39 / var(--tw-border-opacity));
+}
+
+.border-primary {
+  --tw-border-opacity: 1;
+  border-color: rgb(237 0 0 / var(--tw-border-opacity));
+}
+
 .border-red-900 {
   --tw-border-opacity: 1;
   border-color: rgb(127 29 29 / var(--tw-border-opacity));
@@ -1018,6 +1039,11 @@ video {
 .bg-blue-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));
+}
+
+.bg-gray-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
 .bg-gray-500 {
@@ -1066,6 +1092,11 @@ video {
   padding: 1.25rem;
 }
 
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
 .px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
@@ -1074,6 +1105,11 @@ video {
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 
 .py-2 {
@@ -1091,12 +1127,24 @@ video {
   padding-bottom: 1rem;
 }
 
+.pb-12 {
+  padding-bottom: 3rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+.pb-5 {
+  padding-bottom: 1.25rem;
+}
+
 .ps-2\.5 {
   padding-inline-start: 0.625rem;
 }
 
-.pt-5 {
-  padding-top: 1.25rem;
+.text-left {
+  text-align: left;
 }
 
 .text-center {
@@ -1113,6 +1161,11 @@ video {
 
 .font-secondary {
   font-family: Georgia, serif;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 
 .text-\[12px\] {
@@ -1164,6 +1217,10 @@ video {
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
+}
+
+.font-bold {
+  font-weight: 700;
 }
 
 .font-medium {
@@ -1295,6 +1352,11 @@ video {
   cursor: pointer;
 }
 
+.hover\:bg-blue-600:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(37 99 235 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
@@ -1374,6 +1436,10 @@ video {
     margin-left: 16rem;
   }
 
+  .sm\:ml-\[210px\] {
+    margin-left: 210px;
+  }
+
   .sm\:ml-\[230px\] {
     margin-left: 230px;
   }
@@ -1411,10 +1477,6 @@ video {
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   }
 
-  .sm\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .sm\:flex-row {
     flex-direction: row;
   }
@@ -1425,20 +1487,16 @@ video {
     margin-left: 13rem;
   }
 
+  .md\:ml-\[240px\] {
+    margin-left: 240px;
+  }
+
   .md\:block {
     display: block;
   }
 
   .md\:hidden {
     display: none;
-  }
-
-  .md\:h-\[120px\] {
-    height: 120px;
-  }
-
-  .md\:w-\[120px\] {
-    width: 120px;
   }
 
   .md\:w-\[600px\] {
@@ -1460,16 +1518,12 @@ video {
 }
 
 @media (min-width: 1024px) {
-  .lg\:ml-64 {
-    margin-left: 16rem;
+  .lg\:ml-\[210px\] {
+    margin-left: 210px;
   }
 
-  .lg\:h-\[150px\] {
-    height: 150px;
-  }
-
-  .lg\:w-\[150px\] {
-    width: 150px;
+  .lg\:ml-\[240px\] {
+    margin-left: 240px;
   }
 
   .lg\:w-full {
@@ -1479,19 +1533,17 @@ video {
   .lg\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-
-  .lg\:text-\[20px\] {
-    font-size: 20px;
-  }
 }
 
 @media (min-width: 1280px) {
-  .xl\:h-\[180px\] {
-    height: 180px;
+  .xl\:ml-\[230px\] {
+    margin-left: 230px;
   }
+}
 
-  .xl\:w-\[180px\] {
-    width: 180px;
+@media (min-width: 1688px) {
+  .xxl\:ml-\[180px\] {
+    margin-left: 180px;
   }
 }
 

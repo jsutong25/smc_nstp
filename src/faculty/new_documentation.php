@@ -17,7 +17,6 @@ if (isset($_SESSION['message'])) {
     unset($_SESSION['message']);
 }
 
-// Check if user_id is set
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['message'] = "User ID is not set. Please log in.";
     header("Location: ../index.php");
@@ -28,11 +27,9 @@ if (!isset($_SESSION['user_id'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $documentation_name = $_POST['documentation_name'];
     $user_id = $_SESSION['user_id'];
-    // $section = $_POST['section'];
 
-    // Sanitize input to prevent SQL injection
     $documentation_name = mysqli_real_escape_string($conn, $documentation_name);
-    $user_id = (int)$user_id; // Cast to integer
+    $user_id = (int)$user_id;
 
     $sql = "INSERT INTO documentation (documentation_name, created_by, section_id) VALUES ('$documentation_name', '$user_id', '$section_id')";
 
@@ -76,7 +73,7 @@ $conn->close();
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 sm:ml-64">
+        <div class="mt-4 p-2 sm:ml-[210px]">
             <a href="../documentation.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
@@ -85,7 +82,7 @@ $conn->close();
         <div class="flex h-screen w-full overflow-hidden">
         <?php include '../sidebar_faculty.php'; ?>
 
-            <div class="mx-auto w-full sm:w-[500px] md:w-[600px] h-[65vh] content-center flex-grow p-4 sm:ml-64">
+            <div class="mx-auto w-full sm:w-[500px] md:w-[600px] h-[65vh] content-center flex-grow p-4 sm:ml-[210px]">
                 <div class="mb-8">
                     <h1 class="text-center text-[32px]">Create new album</h1>
                 </div>
@@ -129,19 +126,15 @@ $conn->close();
         const button = document.querySelector('[data-drawer-toggle="logo-sidebar"]');
         const sidebar = document.getElementById('logo-sidebar');
 
-        // Function to toggle the sidebar
         const toggleSidebar = () => {
             sidebar.classList.toggle('-translate-x-full');
         };
 
-        // Event listener for the hamburger button
         button.addEventListener('click', toggleSidebar);
 
-        // Event listener for clicks outside the sidebar
         document.addEventListener('click', (event) => {
-            // Check if the click is outside the sidebar and the button
             if (!sidebar.contains(event.target) && !button.contains(event.target)) {
-                sidebar.classList.add('-translate-x-full'); // Close the sidebar
+                sidebar.classList.add('-translate-x-full');
             }
         });
     </script>
@@ -149,12 +142,12 @@ $conn->close();
     <script>
         window.onload = function() {
             <?php if (!empty($message)): ?>
-                document.getElementById('messageModal').classList.remove('hidden'); // Show modal
+                document.getElementById('messageModal').classList.remove('hidden');
             <?php endif; ?>
         };
 
         function closeModal() {
-            document.getElementById('messageModal').classList.add('hidden'); // Hide modal
+            document.getElementById('messageModal').classList.add('hidden');
         }
     </script>
 

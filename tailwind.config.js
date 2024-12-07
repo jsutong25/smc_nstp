@@ -12,6 +12,9 @@ module.exports = {
         "primary": ['Helvetica Rounded', 'sans-serif'],
         "secondary": ['Georgia', 'serif'],
       },
+      screens: {
+        'xxl': '1688px',
+      },
     },
   },
   plugins: [],

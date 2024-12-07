@@ -3,6 +3,7 @@
 session_start();
 $message = "";
 
+// $conn = new mysqli('localhost', 'testadmin', 'testadminpass', 'smc_nstpms');
 $conn = new mysqli('localhost', 'root', '', 'smc_nstpms');
 
 if ($conn->connect_error) {
@@ -47,6 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: ./registrar/registrar_home.php");
             } else if ($user_type == 'nstp_coordinator') {
                 header("Location: ./faculty/faculty_home.php");
+            } else if ($user_type == 'admin') {
+                header("Location: ./admin/admin_home.php");
             } else {
                 echo "Invalid user type.";
             }
@@ -118,19 +121,15 @@ $conn->close();
     const button = document.querySelector('[data-drawer-toggle="logo-sidebar"]');
     const sidebar = document.getElementById('logo-sidebar');
 
-    // Function to toggle the sidebar
     const toggleSidebar = () => {
         sidebar.classList.toggle('-translate-x-full');
     };
 
-    // Event listener for the hamburger button
     button.addEventListener('click', toggleSidebar);
 
-    // Event listener for clicks outside the sidebar
     document.addEventListener('click', (event) => {
-        // Check if the click is outside the sidebar and the button
         if (!sidebar.contains(event.target) && !button.contains(event.target)) {
-            sidebar.classList.add('-translate-x-full'); // Close the sidebar
+            sidebar.classList.add('-translate-x-full');
         }
     });
     </script>
@@ -138,12 +137,12 @@ $conn->close();
     <script>
         window.onload = function() {
             <?php if (!empty($message)): ?>
-                document.getElementById('messageModal').classList.remove('hidden'); // Show modal
+                document.getElementById('messageModal').classList.remove('hidden');
             <?php endif; ?>
         };
 
         function closeModal() {
-            document.getElementById('messageModal').classList.add('hidden'); // Hide modal
+            document.getElementById('messageModal').classList.add('hidden');
         }
     </script>
 </body>
