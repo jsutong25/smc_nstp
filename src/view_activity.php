@@ -203,7 +203,7 @@ $_SESSION['last_activity'] = time();
                         </div>
                     </div>
 
-                    <div class="mt-8">
+                    <div class="mt-4">
                         <p class="text-lg"><?php echo htmlspecialchars($activity_details['description']); ?></p>
                     </div>
                 </div>
@@ -216,13 +216,14 @@ $_SESSION['last_activity'] = time();
             <div class="flex-grow p-4 sm:ml-[210px]">
                 <div>
                     <div>
-                        <h3>Documentation</h3>
+                        <h3 class="text-lg mb-2">Documentation</h3>
                     </div>
 
                     <div class="mx-auto w-full flex mb-8 gap-2">
                         <form action="" method="POST" enctype="multipart/form-data">
                             <input type="file" name="image" id="image">
-                            <input type="submit" name="upload" value="Upload image">
+                            <input class="bg-primary px-2 py-1 rounded-lg hover:cursor-pointer hover:bg-red-700" type="submit" name="upload" value="Upload image">
+
                         </form>
                     </div>
 

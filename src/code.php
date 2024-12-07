@@ -41,7 +41,7 @@ $conn->close();
 <body class="bg-bg font-primary text-white my-8 mx-8">
   <nav class="flex flex-row">
     <img src="" alt="">
-    <h2 class="text-[20px]">SMC NSTP</h2>
+    <a href="./index.php"><h2 class="text-[20px]">SMC NSTP</h2></a>
   </nav>
 
   <section>
@@ -60,7 +60,7 @@ $conn->close();
         <form action="code.php" class="flex flex-col" method="POST">
             <label for="code">Code:<span class="text-primary ml-1">*</span></label>
             <input autocomplete="off" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="code" placeholder="Enter code given" type="text" required>
-            <button type="submit" class="bg-primary text-white py-2 mt-4">Submit</button>
+            <button type="submit" class="bg-primary py-3 rounded-full mt-9 hover:cursor-pointer hover:bg-red-700">Submit</button>
         </form>
       </div>
     </div>

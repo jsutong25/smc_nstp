@@ -33,14 +33,6 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
     exit();
 }
 
-$query = "SELECT archived_year, GROUP_CONCAT(user_id) as user_ids FROM user WHERE archive = 1 GROUP BY archived_year";
-$result = mysqli_query($conn, $query);
-
-while ($row = mysqli_fetch_assoc($result)) {
-    echo "<h3>Year: " . $row['archived_year'] . "</h3>";
-    echo "<button class='download-btn' data-user-ids='" . $row['user_ids'] . "'>Download</button>";
-}
-
 $_SESSION['last_activity'] = time();
 
 ?>
@@ -172,7 +164,8 @@ $_SESSION['last_activity'] = time();
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 sm:ml-[210px]">
+        <div class="mt-4 p-2 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
+
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
@@ -181,34 +174,80 @@ $_SESSION['last_activity'] = time();
         <div class="flex h-screen w-full">
             <?php include '../sidebar_faculty.php'; ?>
 
-            <div class="flex-grow p-4 sm:ml-[210px]">
+            <div class="flex-grow p-4 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px]">
+
 
                 <div class="">
                     <h2 class="text-[24px]">Archived Classes</h2>
                 </div>
 
-                <div class="w-full p-4">
+                <div class="w-full mt-10">
+
                     <?php
                     // Fetching the archived classes and displaying the button
                     $query = "SELECT archived_year, GROUP_CONCAT(user_id) as user_ids FROM user WHERE archive = 1 GROUP BY archived_year";
                     $result = mysqli_query($conn, $query);
 
                     while ($row = mysqli_fetch_assoc($result)) {
-                        echo "<button class='download-btn hover:text-primary hover:underline' data-user-ids='" . $row['user_ids'] . "'>" . $row['archived_year']  . "</button>";
+                        $archived_year = $row['archived_year'];
+                        $user_ids = $row['user_ids'];
+
+                        echo "
+                    <form action='export_archived.php' method='post' class='inline'>
+                        <input type='hidden' name='archived_year' value='$archived_year'>
+                        <input type='hidden' name='user_ids' value='$user_ids'>
+                        <button type='submit' class='download-btn hover:text-primary hover:underline'>
+                            --- $archived_year NSTP Class [Click to download] ---
+                        </button>
+                    </form>";
                     }
                     ?>
                 </div>
             </div>
         </div>
-        
-</body>
-</html>
 
-<script>
-    document.querySelectorAll('.download-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const userIds = this.dataset.userIds;
-            window.location.href = 'download_archived.php?user_ids=' + userIds;
-        });
-    });
-</script>
+        <script>
+            const button = document.querySelector('[data-drawer-toggle="logo-sidebar"]');
+            const sidebar = document.getElementById('logo-sidebar');
+
+
+            const toggleSidebar = () => {
+                sidebar.classList.toggle('-translate-x-full');
+            };
+
+
+            button.addEventListener('click', toggleSidebar);
+
+
+            document.addEventListener('click', (event) => {
+
+                if (!sidebar.contains(event.target) && !button.contains(event.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+        </script>
+
+        <script>
+            window.onload = function() {
+                <?php if (!empty($message)): ?>
+                    document.getElementById('messageModal').classList.remove('hidden');
+                <?php endif; ?>
+            };
+
+            function closeModal() {
+                document.getElementById('messageModal').classList.add('hidden');
+            }
+        </script>
+
+        <script>
+            document.querySelectorAll('.download-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userIds = this.dataset.userIds;
+                    window.location.href = 'download_archived.php?user_ids=' + userIds;
+                });
+            });
+        </script>
+
+</body>
+
+</html>

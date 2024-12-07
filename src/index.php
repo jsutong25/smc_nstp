@@ -3,6 +3,7 @@
 session_start();
 $message = "";
 
+// $conn = new mysqli('localhost', 'testadmin', 'testadminpass', 'smc_nstpms');
 $conn = new mysqli('localhost', 'root', '', 'smc_nstpms');
 
 if ($conn->connect_error) {
