@@ -223,6 +223,7 @@ $_SESSION['last_activity'] = time();
                         <form action="" method="POST" enctype="multipart/form-data">
                             <input type="file" name="image" id="image">
                             <input class="bg-primary px-2 py-1 rounded-lg hover:cursor-pointer hover:bg-red-700" type="submit" name="upload" value="Upload image">
+
                         </form>
                     </div>
 

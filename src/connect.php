@@ -2,8 +2,8 @@
 
 $servername = "localhost";
 $username = "root";
-$password = ""; // Use your database password
-$database = "smc_nstpms"; // Use your database name
+$password = ""; 
+$database = "smc_nstpms";
 
 $conn = new mysqli($servername, $username, $password, $database);
 
