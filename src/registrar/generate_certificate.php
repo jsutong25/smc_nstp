@@ -5,9 +5,9 @@ include "../connect.php";
 
 $conn = new mysqli('localhost', 'root', '', 'smc_nstpms');
 
-if (isset($_POST['user_id']) && isset($_POST['template_path'])) {
+if (isset($_POST['user_id'])) {
     $user_id = $_POST['user_id'];
-    $template_path = $_POST['template_path'];
+    $template_path = $_POST['template_path'] ?? '';
 
     $student = $conn->query("SELECT last_name, first_name, middle_name FROM user WHERE user_id = $user_id")->fetch_assoc();
     $last_name = $student['last_name'];
@@ -17,9 +17,12 @@ if (isset($_POST['user_id']) && isset($_POST['template_path'])) {
     // Set up PDF certificate
     $pdf = new FPDF('L', 'mm', 'A4'); // Landscape mode
     $pdf->AddPage();
-    
-    // Set the template image as the background
-    $pdf->Image($template_path, 0, 0, 297, 360); // Fit the design to A4 landscape
+
+    // Check if template path is provided and file exists
+    if (!empty($template_path) && file_exists($template_path)) {
+        // Set the template image as the background
+        $pdf->Image($template_path, 0, 0, 297, 360); // Fit the design to A4 landscape
+    }
 
     // Add name at a fixed position
     $pdf->SetFont('Arial', 'B', 24);

@@ -200,7 +200,7 @@ $_SESSION['last_activity'] = time();
             <?php include './sidebar_admin.php'; ?>
 
             
-            <div class="flex-grow p-4 sm:ml-[210px]">
+            <div class="flex-grow p-4 sm:ml-[250px] md:ml-[250px] lg:ml-[250px] xl:ml-[230px] xxl:ml-[180px]">
                 <h1 class="text-[22px] mb-8">Admin Dashboard</h1>
                 <div class="bg-white p-2 rounded-md mt-8">
 

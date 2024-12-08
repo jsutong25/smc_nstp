@@ -112,7 +112,7 @@ $_SESSION['last_activity'] = time();
         <div class="flex h-full w-full">
             <?php include '../sidebar_student.php'; ?>
 
-            <div class="flex-grow p-4 sm:ml-64 md:ml-52 lg:ml-[210px] overflow-hidden max-w-full">
+            <div class="flex-grow p-4 sm:ml-[250px] md:ml-[250px] lg:ml-[250px] xl:ml-[230px] xxl:ml-[180px] overflow-hidden max-w-full">
 
                 <div class="w-full">
                     <h2 class="text-[32px] mt-5 mb-8 font-secondary">Section - <?php echo htmlspecialchars($section_name); ?></h2>
