@@ -1,17 +1,17 @@
 <?php
 
 session_start();
+error_reporting(0);
 include "../connect.php";
-$message = "";
+
 $user_type = $_SESSION['user_type'];
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
-
 $faculty_id = $_SESSION['user_id'];
-$section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
 
 if ($user_type == 'student') {
     header("Location: ../student/student_home.php?section_id=$section_id");
 }
+
 
 $timeout_duration = 3600;
 
@@ -33,9 +33,11 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
     exit();
 }
 
-$sql = "SELECT section_name FROM section WHERE section_id = $section_id";
-$result = mysqli_query($conn, $sql);
-$section = mysqli_fetch_assoc($result);
+if($section_id) {
+    $sql = "SELECT section_name FROM section WHERE section_id = $section_id";
+    $result = mysqli_query($conn, $sql);
+    $section = mysqli_fetch_assoc($result);
+}
 
 $section_name = $section['section_name'];
 
@@ -176,7 +178,7 @@ $_SESSION['last_activity'] = time();
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 sm:ml-[210px]">
+        <div class="mt-4 p-2 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
@@ -185,7 +187,7 @@ $_SESSION['last_activity'] = time();
         <div class="flex h-screen w-full">
             <?php include '../sidebar_faculty.php'; ?>
 
-            <div class="flex-grow p-4 sm:ml-[210px]">
+            <div class="flex-grow p-4 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
 
                 <div class="flex space-x-4 mb-8 overflow-hidden">
                     <?php if ($sections_result && mysqli_num_rows($sections_result) > 0): ?>
@@ -245,6 +247,11 @@ $_SESSION['last_activity'] = time();
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php
+                                    if(!$section_id) {
+                                        echo "<tr><td colspan='15'>Please select a section</td></tr>";
+                                    }
+                                ?>
                                 <?php
                                 if ($section_name == "All" || $section_name == "all" || $section_name == "ALL") {
                                     $sql = "SELECT * FROM user WHERE user_type = 'student' AND archive = 0";

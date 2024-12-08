@@ -176,7 +176,7 @@ $_SESSION['last_activity'] = time();
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 flex-grow sm:ml-[210px]">
+        <div class="mt-4 p-2 flex-grow sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
             <a href="./activities.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
@@ -189,7 +189,7 @@ $_SESSION['last_activity'] = time();
                 <?php include './sidebar_student-src.php'; ?>
             <?php endif; ?>
 
-            <div class="flex-grow p-4 sm:ml-[210px]">
+            <div class="flex-grow p-4 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
 
                 <!-- Activity -->
                 <div class="h-full">
@@ -203,7 +203,7 @@ $_SESSION['last_activity'] = time();
                         </div>
                     </div>
 
-                    <div class="mt-8">
+                    <div class="mt-4">
                         <p class="text-lg"><?php echo htmlspecialchars($activity_details['description']); ?></p>
                     </div>
                 </div>
@@ -216,13 +216,13 @@ $_SESSION['last_activity'] = time();
             <div class="flex-grow p-4 sm:ml-[210px]">
                 <div>
                     <div>
-                        <h3>Documentation</h3>
+                        <h3 class="text-lg mb-2">Documentation</h3>
                     </div>
 
                     <div class="mx-auto w-full flex mb-8 gap-2">
                         <form action="" method="POST" enctype="multipart/form-data">
                             <input type="file" name="image" id="image">
-                            <input type="submit" name="upload" value="Upload image">
+                            <input class="bg-primary px-2 py-1 rounded-lg hover:cursor-pointer hover:bg-red-700" type="submit" name="upload" value="Upload image">
                         </form>
                     </div>
 

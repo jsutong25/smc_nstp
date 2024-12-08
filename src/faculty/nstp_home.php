@@ -1,4 +1,4 @@
-<div class="flex-grow p-4 sm:ml-64 md:ml-52 lg:ml-[210px] overflow-hidden max-w-full">
+<div class="flex-grow p-4 sm:ml-[250px] md:ml-[250px] lg:ml-[250px] xl:ml-[230px] xxl:ml-[180px] overflow-hidden max-w-full">
     <h1 class="text-[22px] mb-8">NSTP Coordinator</h1>
 
     <div class="flex space-x-4 mb-8 overflow-hidden">
