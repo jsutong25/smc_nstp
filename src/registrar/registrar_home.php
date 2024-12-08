@@ -1,5 +1,6 @@
 <?php
 session_start();
+error_reporting(0);
 require('../../libs/fpdf.php');
 include "../connect.php";
 
@@ -155,16 +156,16 @@ $_SESSION['last_activity'] = time();
         <div class="flex h-screen w-full">
             <?php include '../registrar_sidebar.php'; ?>
 
-            <div class="flex-grow p-4 sm:ml-[210px]">
+            <div class="flex-grow p-4 sm:ml-[250px] md:ml-[250px] lg:ml-[250px] xl:ml-[230px] xxl:ml-[180px]">
                 <h2 class="text-[32px] mt-5 mb-8 font-secondary">Registrar Dashboard</h2>
 
-                <div class="bg-white p-2 rounded-md w-fit">
+                <div class="bg-white p-2 rounded-md w-full">
 
                     <!-- Add file upload for certificate design -->
-                    <form action="upload_template.php" method="POST" enctype="multipart/form-data">
+                    <form class="flex flex-col xl:flex-row xl:items-center" action="upload_template.php" method="POST" enctype="multipart/form-data">
                         <label for="template" class="block text-gray-900">Upload Certificate Design:</label>
-                        <input type="file" name="template" id="template" class="bg-gray-100 text-gray-900 p-2 rounded mb-4">
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                        <input type="file" name="template" id="template" class="bg-gray-100 text-gray-900 p-2 rounded mb-4 gap-5">
+                        <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-red-700 transition mb-2">
                             Upload Design
                         </button>
                     </form>
@@ -224,8 +225,7 @@ $_SESSION['last_activity'] = time();
         <script>
             $(document).ready(function() {
                 $('#student').DataTable({
-                    dom: 'Bfrtip',
-                    buttons: ['excel'],
+                    dom: 'frtip', // Remove 'B' to get rid of the buttons (e.g., Excel)
                     language: {
                         info: "Displaying _START_ to _END_ of _TOTAL_ entries", // Custom text for the entries display
                         emptyTable: "No data available", // Text when the table is empty
