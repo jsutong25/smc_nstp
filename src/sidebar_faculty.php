@@ -10,7 +10,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </a>
         <ul class="space-y-2 font-medium">
             <li>
-                <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>" class="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group <?php echo $current_page == 'faculty_home.php' ? 'bg-active text-black' : ''; ?>">
+                <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>" class="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group <?php echo $current_page == 'faculty_home.php' ? 'bg-active text-gray-900' : ''; ?>">
                     <svg class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 22 21">
                         <path fill="currentColor" d="M18 18V7.132l-8-4.8l-8 4.8V18h4v-2.75a4 4 0 1 1 8 0V18h4zm-6 2v-4.75a2 2 0 1 0-4 0V20H2a2 2 0 0 1-2-2V7.132a2 2 0 0 1 .971-1.715l8-4.8a2 2 0 0 1 2.058 0l8 4.8A2 2 0 0 1 20 7.132V18a2 2 0 0 1-2 2h-6z" />
                     </svg>
