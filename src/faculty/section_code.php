@@ -97,7 +97,7 @@ $result = mysqli_query($conn, $sql);
                 </svg></a>
         </div>
 
-        <div class="flex h-screen w-full overflow-hidden sm:ml-96">
+        <div class="flex h-screen w-full overflow-hidden ml-0 sm:ml-60">
             <?php include '../sidebar_faculty.php'; ?>
 
             <div class="mx-auto mt-10">
