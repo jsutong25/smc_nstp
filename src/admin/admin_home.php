@@ -82,6 +82,7 @@ $_SESSION['last_activity'] = time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../output.css" rel="stylesheet">
     <title>Admin</title>
+    <link rel="shortcut icon" href="../../assets/favicon.ico" type="image/x-icon">
 
     <style>
         /* Ensure the table has a light background */

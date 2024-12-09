@@ -72,8 +72,9 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Activity</title>
+    <title>Edit Section</title>
     <link href="../output.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../assets/favicon.ico" type="image/x-icon">
 </head>
 
 <body class="bg-bg font-primary text-white my-8 mx-8 overflow-hidden">

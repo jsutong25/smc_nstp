@@ -144,8 +144,6 @@ $_SESSION['last_activity'] = time();
 
 ?>
 
-
-
 <!doctype html>
 <html>
 
@@ -153,7 +151,8 @@ $_SESSION['last_activity'] = time();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="./output.css" rel="stylesheet">
-    <title>Activity</title>
+    <title>View Activity</title>
+    <link rel="shortcut icon" href="../assets/favicon.ico" type="image/x-icon">
 
     <style>
         .lightbox {
@@ -213,7 +212,7 @@ $_SESSION['last_activity'] = time();
 
         <!-- Documentation -->
         <div class="flex h-screen">
-            <div class="flex-grow p-4 sm:ml-[210px]">
+            <div class="flex-grow p-4 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
                 <div>
                     <div>
                         <h3 class="text-lg mb-2">Documentation</h3>
@@ -222,7 +221,7 @@ $_SESSION['last_activity'] = time();
                     <div class="mx-auto w-full flex mb-8 gap-2">
                         <form action="" method="POST" enctype="multipart/form-data">
                             <input type="file" name="image" id="image">
-                            <input type="submit" name="upload" value="Upload image">
+                            <input class="bg-primary px-2 py-1 rounded-lg mt-4" type="submit" name="upload" value="Upload image">
                         </form>
                     </div>
 

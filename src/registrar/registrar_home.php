@@ -4,8 +4,6 @@ error_reporting(0);
 require('../../libs/fpdf.php');
 include "../connect.php";
 
-$conn = new mysqli('localhost', 'root', '', 'smc_nstpms');
-
 $message = "";
 $user_id = $_SESSION['user_id'];
 $timeout_duration = 3600;
@@ -34,7 +32,8 @@ $_SESSION['last_activity'] = time();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../output.css" rel="stylesheet">
-    <title>Student</title>
+    <title>Registrar</title>
+    <link rel="shortcut icon" href="../../assets/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css" />
@@ -150,7 +149,7 @@ $_SESSION['last_activity'] = time();
                     <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
                 </svg>
             </button>
-            <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
+            <a href="#"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
         <div class="flex h-screen w-full">
@@ -181,7 +180,7 @@ $_SESSION['last_activity'] = time();
                         <tbody>
                             <?php
                             // Fetch and display students
-                            $result = $conn->query("SELECT user_id, last_name, first_name, middle_name FROM user WHERE user_type = 'student'");
+                            $result = $conn->query("SELECT user_id, last_name, first_name, middle_name FROM user WHERE user_type = 'student' AND archive = 0");
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr>
                     <td class='py-3 px-4 text-gray-900'>{$row['last_name']}, {$row['first_name']} {$row['middle_name']}</td>

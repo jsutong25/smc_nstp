@@ -58,7 +58,8 @@ $_SESSION['last_activity'] = time();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../output.css" rel="stylesheet">
-    <title>NSTP Student Information</title>
+    <title>Student Information</title>
+    <link rel="shortcut icon" href="../../assets/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css" />
@@ -212,6 +213,7 @@ $_SESSION['last_activity'] = time();
                     </div>
 
                     <div class="bg-white p-2 rounded-md">
+                    <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
                         <?php if ($section_name == "All" || $section_name == "all" || $section_name == "ALL"): ?>
                         <form class="text-gray-900" method="post">
                             <label for="prefix">Enter Serial Number Prefix:</label>
@@ -219,6 +221,7 @@ $_SESSION['last_activity'] = time();
                             <button class="bg-primary rounded-lg px-2 py-1 text-white" type="submit">Generate</button>
                         </form>
                         <?php endif; ?>
+                    <?php endif; ?>
 
                         <table id="student" class="display" style="width:100%">
                             <thead>
@@ -321,9 +324,11 @@ $_SESSION['last_activity'] = time();
                             </tbody>
                         </table>
                     </div>
+                    <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
                     <form action="" method="post">
                         <button id="archiveButton" class="bg-primary px-3 py-1 rounded-lg mt-5">Archive Displayed Records</button>
                     </form>
+                    <?php endif; ?>
 
                 </div>
             </div>
@@ -351,7 +356,9 @@ $_SESSION['last_activity'] = time();
         $(document).ready(function() {
             $('#student').DataTable({
                 dom: 'Bfrtip',
+                <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
                 buttons: ['excel'],
+                <?php endif; ?>
                 language: {
                     info: "Displaying _START_ to _END_ of _TOTAL_ entries", // Custom text for the entries display
                     emptyTable: "No data available", // Text when the table is empty

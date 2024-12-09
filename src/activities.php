@@ -88,7 +88,8 @@ $_SESSION['last_activity'] = time();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="./output.css" rel="stylesheet">
-    <title>Faculty</title>
+    <title>Activity</title>
+    <link rel="shortcut icon" href="../assets/favicon.ico" type="image/x-icon">
 </head>
 
 <body class="bg-bg font-primary text-white my-8 mx-8 h-[100vh] overflow-x-hidden overflow-y-auto box-border">
@@ -130,7 +131,7 @@ $_SESSION['last_activity'] = time();
                     <div class="flex justify-between items-center">
                         <h2 class="text-[24px]">Upcoming Activities</h2>
                         <?php if ($_SESSION['user_type'] == 'nstp_coordinator' || $_SESSION['user_type'] == 'faculty'): ?>
-                            <a class="text-subtext hover:text-primary underline" href="./history_activities.php">History</a>
+                            <a class="text-subtext hover:text-primary underline" href="./faculty/history_activities.php">History</a>
                         <?php endif; ?>
                     </div>
 

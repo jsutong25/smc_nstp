@@ -1031,7 +1031,7 @@ video {
 
 .bg-active {
   --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+  background-color: rgb(44 7 3 / var(--tw-bg-opacity));
 }
 
 .bg-bg {
@@ -1439,10 +1439,6 @@ video {
     margin-left: 15rem;
   }
 
-  .sm\:ml-64 {
-    margin-left: 16rem;
-  }
-
   .sm\:ml-\[210px\] {
     margin-left: 210px;
   }
@@ -1563,6 +1559,14 @@ video {
 @media (min-width: 1688px) {
   .xxl\:ml-\[180px\] {
     margin-left: 180px;
+  }
+
+  .xxl\:ml-\[230px\] {
+    margin-left: 230px;
+  }
+
+  .xxl\:ml-\[240px\] {
+    margin-left: 240px;
   }
 }
 
