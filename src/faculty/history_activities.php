@@ -45,7 +45,8 @@ $_SESSION['last_activity'] = time();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../output.css" rel="stylesheet">
-    <title>Faculty</title>
+    <title>History</title>
+    <link rel="shortcut icon" href="../../assets/favicon.ico" type="image/x-icon">
 </head>
 
 <body class="bg-bg font-primary text-white my-8 mx-8 h-[100vh] overflow-hidden">

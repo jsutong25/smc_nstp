@@ -58,8 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Activity</title>
+    <title>Edit Activity</title>
     <link href="../output.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../assets/favicon.ico" type="image/x-icon">
 </head>
 
 <body class="bg-bg font-primary text-white my-8 mx-8 overflow-auto">
@@ -75,16 +76,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <a href="./faculty_home.php?section_id=<?php echo $section_id; ?>"><span class="text-lg">SMC NSTP</span></a>
         </div>
 
-        <div class="mt-4 p-2 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
+        <div class="mt-4 p-2 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[230px]">
             <a href="../activities.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
         </div>
 
-        <div class="flex h-full w-full overflow-hidden">
+        <div class="flex h-full w-full">
             <?php include '../sidebar_faculty.php'; ?>
 
-            <div class="mx-auto w-full md:w-[600px] content-center flex-grow p-4 sm:ml-64">
+            <div class="w-full content-center flex-grow p-4 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[240px]">
                 <div class="mb-8">
                     <h1 class="text-center text-[40px]">Edit Activity</h1>
                 </div>

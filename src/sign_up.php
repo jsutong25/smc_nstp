@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 session_start();
-$conn = new mysqli('localhost', 'root', '', 'smc_nstpms');
+include "./connect.php";
 
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
@@ -97,6 +97,7 @@ $conn->close();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign up</title>
   <link href="./output.css" rel="stylesheet">
+  <link rel="shortcut icon" href="../assets/favicon.ico" type="image/x-icon">
 </head>
 
 <body class="bg-bg font-primary text-white my-8 mx-8">

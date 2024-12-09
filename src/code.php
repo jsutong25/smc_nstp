@@ -1,7 +1,6 @@
 <?php
 session_start();
-
-$conn = new mysqli('localhost', 'root', '', 'smc_nstpms');
+include "./connect.php";
 
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
@@ -35,8 +34,9 @@ $conn->close();
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign up</title>
+  <title>Code</title>
   <link href="./output.css" rel="stylesheet">
+  <link rel="shortcut icon" href="../assets/favicon.ico" type="image/x-icon">
 </head>
 <body class="bg-bg font-primary text-white my-8 mx-8">
   <nav class="flex flex-row">

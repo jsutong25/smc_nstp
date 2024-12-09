@@ -3,8 +3,6 @@ session_start();
 require('../../libs/fpdf.php');
 include "../connect.php";
 
-$conn = new mysqli('localhost', 'root', '', 'smc_nstpms');
-
 if (isset($_POST['user_id'])) {
     $user_id = $_POST['user_id'];
     $template_path = $_POST['template_path'] ?? '';

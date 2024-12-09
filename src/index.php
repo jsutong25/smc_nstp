@@ -1,10 +1,8 @@
 <?php
 
 session_start();
+include "./connect.php";
 $message = "";
-
-// $conn = new mysqli('localhost', 'testadmin', 'testadminpass', 'smc_nstpms');
-$conn = new mysqli('localhost', 'root', '', 'smc_nstpms');
 
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
@@ -79,6 +77,7 @@ $conn->close();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="./output.css" rel="stylesheet">
   <title>Sign in</title>
+  <link rel="shortcut icon" href="../assets/favicon.ico" type="image/x-icon">
 </head>
 <body class="bg-bg font-primary text-white my-8 mx-8 h-[100vh] overflow-hidden">
   <nav class="flex flex-row">

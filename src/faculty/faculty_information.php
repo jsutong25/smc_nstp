@@ -53,7 +53,8 @@ $_SESSION['last_activity'] = time();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../output.css" rel="stylesheet">
-    <title>Faculty</title>
+    <title>Faculty Information</title>
+    <link rel="shortcut icon" href="../../assets/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css" />
@@ -264,8 +265,7 @@ $_SESSION['last_activity'] = time();
     <script>
         $(document).ready(function() {
             $('#student').DataTable({
-                dom: 'Bfrtip',
-                buttons: ['excel'],
+                dom: 'frtip',
                 language: {
                     info: "Displaying _START_ to _END_ of _TOTAL_ entries", // Custom text for the entries display
                     emptyTable: "No data available", // Text when the table is empty
