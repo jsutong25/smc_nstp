@@ -2,6 +2,7 @@
 session_start();
 include '../connect.php';
 
+$user_id = $_SESSION['user_id'];
 $user_type = $_SESSION['user_type'];
 
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
@@ -101,9 +102,9 @@ $result = mysqli_query($conn, $sql);
         <div class="flex h-screen w-full overflow-hidden ml-0 sm:ml-60">
             <?php include '../sidebar_faculty.php'; ?>
 
-            <div class="mx-auto mt-10">
+            <div class="mx-auto sm:mx-0 sm:ml-10 mt-10">
                 <p class="mt-4">
-                    Current Registration Code: 
+                    Current Registration Code (Section: <?php echo $section_name; ?>): 
                 </p>
                 <div class="border border-primary flex justify-center items-center mt-4 pb-5">
                     <p class="mt-4 text-2xl"><?php echo $current_code ? $current_code : 'No registration code generated yet for this section.'; ?></p>

@@ -4,6 +4,7 @@ session_start();
 include "../connect.php";
 $message = "";
 
+$user_id = $_SESSION['user_id'];
 $faculty_id = $_SESSION['user_id'];
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
 

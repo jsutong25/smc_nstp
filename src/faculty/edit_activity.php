@@ -4,6 +4,7 @@ include '../connect.php';
 
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
 
+$user_id = $_SESSION['user_id'];
 $user_type = $_SESSION['user_type'];
 
 if ($user_type == 'student') {

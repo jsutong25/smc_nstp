@@ -41,14 +41,6 @@ if (isset($_POST['user_ids']) && isset($_POST['archived_year'])) {
         $column++;
     }
 
-    // Create a new database connection
-    $conn = new mysqli('localhost', 'root', '', 'smc_nstpms');
-
-    // Check database connection
-    if ($conn->connect_error) {
-        die("Database connection failed: " . $conn->connect_error);
-    }
-
     // Query archived data for the specific year
     $sql = "SELECT * FROM user WHERE user_id IN ($user_ids) AND archive = 1";
     $result = $conn->query($sql);

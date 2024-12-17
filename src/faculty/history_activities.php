@@ -4,8 +4,10 @@ session_start();
 include "../connect.php";
 $message = "";
 
-$user_type = $_SESSION['user_type'];
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
+
+$user_id = $_SESSION['user_id'];
+$user_type = $_SESSION['user_type'];
 
 if ($user_type == 'student') {
     header("Location: ../student/student_home.php?section_id=$section_id");
@@ -31,8 +33,39 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
     exit();
 }
 
-$sql = "SELECT * FROM activities WHERE CONCAT(date, ' ', time) < NOW() ORDER by date, time DESC";
-$result = mysqli_query($conn, $sql);
+$activities_result = null;
+$documentation_result = null;
+
+$sql_sections = "SELECT section_id, section_name FROM section WHERE faculty_id = ? OR section_name ='All' ORDER BY CASE WHEN section_name ='All' THEN 0 ELSE 1 END, section_name ASC";
+$stmt = $conn->prepare($sql_sections);
+$stmt->bind_param("i", $faculty_id);
+$stmt->execute();
+$sections_result = $stmt->get_result();
+
+if ($section_id) {
+    $sql = "
+        SELECT a.*, d.documentation_id
+        FROM activities a
+        LEFT JOIN documentation d ON a.activity_id = d.activity_id
+        WHERE a.section_id = ? AND CONCAT(a.date, ' ', a.time) < NOW()
+        ORDER BY a.date, a.time DESC";
+
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("i", $section_id);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+        } else {
+            echo "Query execution failed: " . $stmt->error;
+        }
+    } else {
+        echo "Query preparation failed: " . $conn->error;
+    }
+} else {
+    echo "<p>No section selected</p>";
+    $result = null;
+}
+
 
 $_SESSION['last_activity'] = time();
 
@@ -49,7 +82,7 @@ $_SESSION['last_activity'] = time();
     <link rel="shortcut icon" href="../../assets/favicon.ico" type="image/x-icon">
 </head>
 
-<body class="bg-bg font-primary text-white my-8 mx-8 h-[100vh] overflow-hidden">
+<body class="bg-bg font-primary text-white mx-8 h-[100vh] overflow-hidden">
     <div class="container mx-auto">
         <div class="flex flex-row items-center gap-2">
             <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
@@ -62,13 +95,13 @@ $_SESSION['last_activity'] = time();
         </div>
 
         <div class="mt-4 p-2 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
-            <a href="./activities.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
+            <a href="../activities.php?section_id=<?php echo $section_id; ?>"><svg class="transition ease-in-out hover:text-primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 42 42">
                     <path fill="currentColor" fill-rule="evenodd" d="M27.066 1L7 21.068l19.568 19.569l4.934-4.933l-14.637-14.636L32 5.933z" />
                 </svg></a>
         </div>
 
         <div class="flex h-screen w-full overflow-hidden">
-        <?php include '../sidebar_faculty.php'; ?>
+            <?php include '../sidebar_faculty.php'; ?>
 
             <div class="flex-grow p-4 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
 
@@ -80,7 +113,7 @@ $_SESSION['last_activity'] = time();
 
                     <div class="w-full">
                         <?php
-                        if (mysqli_num_rows($result) > 0) {
+                        if ($result && mysqli_num_rows($result) > 0) {
                             while ($row = mysqli_fetch_assoc($result)) {
                                 $formatted_date = date("F j, Y", strtotime($row['date']));
                                 $formatted_time = date("h:i A", strtotime($row['time']));
@@ -93,7 +126,7 @@ $_SESSION['last_activity'] = time();
 
                                     <div class="w-1.5 h-auto bg-gray-500"></div>
 
-                                    <a class="transition ease-linear hover:bg-gray-400 hover:bg-opacity-15 mx-8" href="">
+                                    <a class="transition ease-linear hover:bg-gray-400 hover:bg-opacity-15 mx-8" href="../view_activity.php?activity_id=<?php echo $row['activity_id']; ?>&section_id=<?php echo $section_id; ?>&documentation_id=<?php echo $row['documentation_id']; ?>">
                                         <div class="flex-1">
                                             <h5><?php echo substr($row['activity_name'], 0, 25) . '...'; ?></h5>
                                             <p class="text-subtext"><?php echo substr($row['description'], 0, 20) . '...'; ?></p>
@@ -104,7 +137,7 @@ $_SESSION['last_activity'] = time();
                         <?php
                             }
                         } else {
-                            echo "<p>No upcoming activities</p>";
+                            echo "<p>No finished activities for this section</p>";
                         }
                         ?>
                     </div>

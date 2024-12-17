@@ -1,0 +1,5 @@
+Example serial number: NSTP1_SMC2024, NSTP2_SMC2024, NSTP3_SMC2024....
+
+1) Enter text NSTP1_SMC2024
+2) Select the number that is going to be iterating for each student, in this case its the number after "NSTP". Erase it and input a "_" (single underline) instead. Making a blank for the number.
+3) Press Generate

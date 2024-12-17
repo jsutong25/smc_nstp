@@ -35,12 +35,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <span class="ms-3">Faculty</span>
                     </a>
                 </li>
-                <li>
-                    <a href="./sections.php?section_id=<?php echo $section_id; ?>" class="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group <?php echo $current_page == 'sections.php' ? 'bg-active' : ''; ?>">
-                    <svg class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 512 512"><path fill="currentColor" d="M472 328h-24v-64a24.027 24.027 0 0 0-24-24H272v-64h32a24.028 24.028 0 0 0 24-24V80a24.028 24.028 0 0 0-24-24h-96a24.028 24.028 0 0 0-24 24v72a24.028 24.028 0 0 0 24 24h32v64H88a24.027 24.027 0 0 0-24 24v64H40a24.028 24.028 0 0 0-24 24v72a24.028 24.028 0 0 0 24 24h80a24.028 24.028 0 0 0 24-24v-72a24.028 24.028 0 0 0-24-24H96v-56h144v56h-24a24.028 24.028 0 0 0-24 24v72a24.028 24.028 0 0 0 24 24h80a24.028 24.028 0 0 0 24-24v-72a24.028 24.028 0 0 0-24-24h-24v-56h144v56h-24a24.028 24.028 0 0 0-24 24v72a24.028 24.028 0 0 0 24 24h80a24.028 24.028 0 0 0 24-24v-72a24.028 24.028 0 0 0-24-24ZM216 88h80v56h-80ZM112 360v56H48v-56Zm176 0v56h-64v-56Zm176 56h-64v-56h64Z"/></svg>
-                        <span class="ms-3">Sections</span>
-                    </a>
-                </li>
             <?php endif; ?>
             <li>
                 <a href="./section_code.php?section_id=<?php echo $section_id; ?>" class="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group <?php echo $current_page == 'section_code.php' ? 'bg-active' : ''; ?>">
@@ -65,6 +59,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <?php endif; ?>
+            <li>
+                <a href="./profile.php?section_id=<?php echo $section_id; ?>&user_id=<?php echo $user_id; ?>" class="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group <?php echo $current_page == 'profile.php' ? 'bg-active' : ''; ?>">
+                    <svg class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 512 512">
+                        <path fill="currentColor" d="m411.6 343.656l-72.823-47.334l27.455-50.334A80.23 80.23 0 0 0 376 207.681V128a112 112 0 0 0-224 0v79.681a80.236 80.236 0 0 0 9.768 38.308l27.455 50.333l-72.823 47.334A79.725 79.725 0 0 0 80 410.732V496h368v-85.268a79.727 79.727 0 0 0-36.4-67.076ZM416 464H112v-53.268a47.836 47.836 0 0 1 21.841-40.246l97.66-63.479l-41.64-76.341A48.146 48.146 0 0 1 184 207.681V128a80 80 0 0 1 160 0v79.681a48.146 48.146 0 0 1-5.861 22.985L296.5 307.007l97.662 63.479A47.836 47.836 0 0 1 416 410.732Z" />
+                    </svg>
+                    <span class="ms-3">Profile</span>
+                </a>
+            </li>
             <li>
                 <hr class="rounded-lg">
             </li>

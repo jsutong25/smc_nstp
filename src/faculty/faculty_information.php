@@ -4,6 +4,7 @@ session_start();
 include "../connect.php";
 $message = "";
 
+$user_id = $_SESSION['user_id'];
 $user_type = $_SESSION['user_type'];
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
 
@@ -40,6 +41,32 @@ $sql_sections = "SELECT u.*, GROUP_CONCAT(s.section_name SEPARATOR ', ') AS sect
 $stmt = $conn->prepare($sql_sections);
 $stmt->execute();
 $sections_result = $stmt->get_result();
+
+$sql_sections2 = "SELECT section.section_id, section.section_name, section.schedule, user.last_name, section.code 
+                 FROM section 
+                 JOIN user ON section.faculty_id = user.user_id";
+$stmt2 = $conn->prepare($sql_sections2);
+$stmt2->execute();
+$sections_result2 = $stmt2->get_result();
+
+if (isset($_POST['delete_section'])) {
+    $section_id_to_delete = intval($_POST['section_id_to_delete']);
+
+    $sql_delete_section = "DELETE FROM section WHERE section_id = ?";
+    $stmt = $conn->prepare($sql_delete_section);
+    $stmt->bind_param("i", $section_id_to_delete);
+
+    if ($stmt->execute()) {
+        $_SESSION['message'] = "Section deleted successfully.";
+    } else {
+        $_SESSION['message'] = "Failed to delete the section.";
+    }
+
+    $stmt->close();
+
+    header("Location: ./sections.php?section_id=<?php echo $section_id; ?>");
+    exit();
+}
 
 
 $_SESSION['last_activity'] = time();
@@ -160,10 +187,10 @@ $_SESSION['last_activity'] = time();
     </style>
 </head>
 
-<body class="bg-bg font-primary text-white my-8 mx-8 h-[100vh] overflow-y-hidden overflow-x-auto">
+<body class="bg-bg font-primary text-white my-8 mx-8 h-[100vh] overflow-y-auto overflow-x-auto">
 
 
-    <div class="container mx-auto">
+    <div class="container mx-auto pb-10 mb-10">
         <div class="flex flex-row items-center gap-2 md:hidden">
             <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                 <span class="sr-only">Open sidebar</span>
@@ -185,10 +212,23 @@ $_SESSION['last_activity'] = time();
 
             <div class="flex-grow p-4 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
 
-                <!-- Documentation -->
-                <div class="h-full">
+                
+                <div class="h-full pb-10">
+                    <!-- Faculty Info -->
                     <div class="">
                         <h2 class="text-[24px]">Faculty Information</h2>
+                    </div>
+
+                    <div class="w-[20%] flex mb-8 gap-1">
+                        <a class="bg-primary py-3 text-center w-full rounded-full mt-8 hover:cursor-pointer hover:bg-red-700 flex items-center justify-center" href="./new_faculty.php?section_id=<?php echo $section_id; ?>">
+                            <svg class="transition ease-linear duration-200 hover:text-primary mr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                    <path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z" />
+                                    <path d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z" />
+                                </g>
+                            </svg>
+                            Add new faculty
+                        </a>
                     </div>
 
                     <div class="bg-white p-2 rounded-md mt-8">
@@ -234,7 +274,65 @@ $_SESSION['last_activity'] = time();
                                     echo "<tr><td colspan='15'>No data found</td></tr>";
                                 }
 
-                                $conn->close();
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Sections -->
+                    <div class="mt-10">
+                        <h2 class="text-[24px]">Sections</h2>
+                    </div>
+
+                    <div class="w-[20%] flex mb-8 gap-1">
+                        <a class="bg-primary py-3 text-center w-full rounded-full mt-8 hover:cursor-pointer hover:bg-red-700 flex justify-center" href="./new_section.php?section_id=<?php echo $section_id; ?>">
+                            <svg class="transition ease-linear duration-200 hover:text-primary mr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                    <path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z" />
+                                    <path d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z" />
+                                </g>
+                            </svg>
+                            Add new section
+                        </a>
+                    </div>
+
+                    <div class="bg-white w-[80%] p-2 rounded-md mt-8 pb-10 mb-10">
+                        <table id="student" class="display" style="width:100%; border: 1px solid #ccc;">
+                            <thead class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
+                                <tr>
+                                    <th>Section</th>
+                                    <th>Schedule</th>
+                                    <th>Faculty</th>
+                                    <th>Code</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
+                                <?php
+                                if ($sections_result2->num_rows > 0) {
+                                    while ($row = $sections_result2->fetch_assoc()) {
+                                        echo "<tr class='py-2' style='width:100%; border: 1px solid #ccc;'>
+                                                <td>{$row['section_name']}</td>
+                                                <td>{$row['schedule']}</td>
+                                                <td>{$row['last_name']}</td>
+                                                <td>{$row['code']}</td>
+                                                <td class='text-center'>
+                                                    <a class='bg-yellow-400 text-white px-4 py-2 rounded hover:bg-yellow-500 transition inline-block text-center' href='./edit_section.php?section_id={$row['section_id']}'  style='min-width: 80px; display: inline-block;'>Edit</a>
+
+                                                    <form method='POST' style='display:inline-block;'>
+                                                        <input type='hidden' name='section_id_to_delete' value='" . $row['section_id'] . "'>
+                                                        <input type='hidden' name='delete_section' value='1'>
+                                                        <button type='submit' class='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition' 
+                                                                style='min-width: 80px; display: inline-block; text-align: center;' 
+                                                                onclick='return confirm(\"Are you sure you want to delete this section and its corresponding values?\");'>Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='15'>No data found</td></tr>";
+                                }
+
                                 ?>
                             </tbody>
                         </table>

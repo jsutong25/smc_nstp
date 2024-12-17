@@ -19,14 +19,15 @@ if (isset($_POST['user_id'])) {
     // Check if template path is provided and file exists
     if (!empty($template_path) && file_exists($template_path)) {
         // Set the template image as the background
-        $pdf->Image($template_path, 0, 0, 297, 360); // Fit the design to A4 landscape
+        $pdf->Image($template_path, 0, 0, 297, 210); // Fit the design to A4 landscape
     }
 
     // Add name at a fixed position
     $pdf->SetFont('Arial', 'B', 24);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->SetXY(100, 120); // Position the name line
-    $pdf->Cell(100, 10, $last_name . ', ' . $first_name . ' ' . $middle_name, 0, 0, 'C');
+    $full_name = strtoupper($last_name . ', ' . $first_name . ' ' . $middle_name);
+    $pdf->SetXY(100, 80); // Position the name line
+    $pdf->Cell(100, 10, $full_name, 0, 0, 'C');
 
     // Output the PDF for download
     $pdf->Output("D", "Certificate_$last_name,$first_name.pdf");

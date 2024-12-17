@@ -4,6 +4,7 @@ session_start();
 include "../connect.php";
 $message = "";
 
+$user_id = $_SESSION['user_id'];
 $timeout_duration = 3600;
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
 $user_type = $_SESSION['user_type'];

@@ -1,9 +1,10 @@
 <?php
 
 session_start();
-error_reporting(0);
+error_reporting(1);
 include "../connect.php";
 
+$user_id = $_SESSION['user_id'];
 $user_type = $_SESSION['user_type'];
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
 $faculty_id = $_SESSION['user_id'];
@@ -41,9 +42,25 @@ if($section_id) {
 
 $section_name = $section['section_name'];
 
-$sql_sections = "SELECT section_id, section_name FROM section WHERE faculty_id = ? OR section_name ='All' ORDER BY CASE WHEN section_name ='All' THEN 0 ELSE 1 END, section_name ASC";
-$stmt = $conn->prepare($sql_sections);
-$stmt->bind_param("i", $faculty_id);
+if($user_type === 'faculty' && $section_name == "All") {
+    $message = "You are not allowed to view all sections.";
+    header("Location: ./faculty_home.php");
+
+}
+
+if ($user_type === 'nstp_coordinator') {
+    $sql_sections = "SELECT section_id, section_name 
+                     FROM section 
+                     WHERE faculty_id = ? OR section_name = 'All'
+                     ORDER BY CASE WHEN section_name = 'All' THEN 0 ELSE 1 END, section_name ASC";
+    $stmt = $conn->prepare($sql_sections);
+    $stmt->bind_param("i", $faculty_id);
+} elseif ($user_type === 'faculty') {
+    // Faculty sees only their sections
+    $sql_sections = "SELECT section_id, section_name FROM section WHERE faculty_id = ? ORDER BY section_name ASC";
+    $stmt = $conn->prepare($sql_sections);
+    $stmt->bind_param("i", $faculty_id);
+}
 $stmt->execute();
 $sections_result = $stmt->get_result();
 
@@ -220,6 +237,12 @@ $_SESSION['last_activity'] = time();
                             <input class="border border-gray-900" type="text" id="prefix" name="prefix" value="">
                             <button class="bg-primary rounded-lg px-2 py-1 text-white" type="submit">Generate</button>
                         </form>
+
+                        <div class="mt-2">
+                            <a class="text-primary underline mb-2" href="./serial.txt" download="serial.txt">
+                                Instructions on how to generate serial numbers
+                            </a>
+                        </div>
                         <?php endif; ?>
                     <?php endif; ?>
 
@@ -356,17 +379,23 @@ $_SESSION['last_activity'] = time();
         $(document).ready(function() {
             $('#student').DataTable({
                 dom: 'Bfrtip',
-                <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
-                buttons: ['excel'],
-                <?php endif; ?>
+                buttons: [
+                    <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
+                    'excel' // Only add "Excel" for nstp_coordinator
+                    <?php else: ?>
+                    // Empty array for all other user types
+                    []
+                    <?php endif; ?>
+                ],
                 language: {
                     info: "Displaying _START_ to _END_ of _TOTAL_ entries", // Custom text for the entries display
                     emptyTable: "No data available", // Text when the table is empty
-                    zeroRecords: "No matching records found", // Text when no records match
+                    zeroRecords: "No matching records found" // Text when no records match
                 }
             });
         });
     </script>
+
 
     <script>
         const button = document.querySelector('[data-drawer-toggle="logo-sidebar"]');

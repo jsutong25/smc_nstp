@@ -2,10 +2,16 @@
 
 session_start();
 include "./connect.php";
-$message = "";
+
+$section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
 
 $user_id = $_SESSION['user_id'];
 $timeout_duration = 3600;
+
+if (!$section_id) {
+    $_SESSION['message'] = "Please select a section.";
+    header("Location: ./faculty/faculty_home.php?section_id=$section_id");
+}
 
 if (isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
@@ -34,7 +40,6 @@ $stmt->bind_param("i", $faculty_id);
 $stmt->execute();
 $sections_result = $stmt->get_result();
 
-$section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
 
 if ($section_id) {
     // Adjust the SQL to include the documentation_id
@@ -128,10 +133,11 @@ $_SESSION['last_activity'] = time();
 
                 <!-- Upcoming activities -->
                 <div class="w-full">
+
                     <div class="flex justify-between items-center">
                         <h2 class="text-[24px]">Upcoming Activities</h2>
                         <?php if ($_SESSION['user_type'] == 'nstp_coordinator' || $_SESSION['user_type'] == 'faculty'): ?>
-                            <a class="text-subtext hover:text-primary underline" href="./faculty/history_activities.php">History</a>
+                            <a class="text-subtext hover:text-primary underline" href="./faculty/history_activities.php?section_id=<?php echo $section_id; ?>">History</a>
                         <?php endif; ?>
                     </div>
 

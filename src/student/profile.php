@@ -143,7 +143,7 @@ $_SESSION['last_activity'] = time();
                         <label for="extension">Suffix (Ex: II, Jr.) [Not required]:</label>
                         <input autocomplete="off" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="extension" placeholder="Enter your suffix/extension name" type="text" value="<?php echo htmlspecialchars($user['extension_name']); ?>">
 
-                        <label class="text-[16px]" for="email">Email<span class="text-primary ml-1">*</span></label>
+                        <label class="text-[16px]" for="email">Email (Use my.smciligan.edu.ph email)<span class="text-primary ml-1">*</span></label>
                         <input autocomplete="off" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="email" placeholder="Enter your email" type="email" required value="<?php echo htmlspecialchars($user['email']); ?>">
 
                         <label for="birthday">Birthday<span class="text-primary ml-1">*</span></label>
@@ -156,7 +156,7 @@ $_SESSION['last_activity'] = time();
                             <option value="M">M</option>
                         </select>
 
-                        <label for="course">Course:<span class="text-primary ml-1">*</span></label>
+                        <label for="course">Course: (Ex: BSIT, BSCE, BSN)<span class="text-primary ml-1">*</span></label>
                         <select class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="course" id="course" required>
                             <option value="<?php echo htmlspecialchars($user['course']); ?>"><?php echo htmlspecialchars($user['course']); ?></option>
                             <option value="BSIT">BSIT</option>
@@ -171,7 +171,7 @@ $_SESSION['last_activity'] = time();
                         <label for="province">Province:<span class="text-primary ml-1">*</span></label>
                         <input autocomplete="off" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="province" placeholder="Enter your barangay" type="text" required value="<?php echo htmlspecialchars($user['province']); ?>">
 
-                        <label for="contact_number">Contact Number<span class="text-primary ml-1">*</span></label>
+                        <label for="contact_number">Contact Number (Ex: 09123456789)<span class="text-primary ml-1">*</span></label>
                         <input autocomplete="off" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="contact_number" placeholder="Enter your contact number" type="text" required value="<?php echo htmlspecialchars($user['contact_number']); ?>">
 
                         <input class="bg-primary py-3 rounded-full mt-9 hover:cursor-pointer hover:bg-red-700" type="submit" value="Update Profile">

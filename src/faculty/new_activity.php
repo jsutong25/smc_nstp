@@ -3,6 +3,7 @@
 session_start();
 include '../connect.php';
 
+$user_id = $_SESSION['user_id'];
 $user_type = $_SESSION['user_type'];
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
 

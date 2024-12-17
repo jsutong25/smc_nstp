@@ -14,14 +14,14 @@ if (isset($_SESSION['message'])) {
 
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] != true) {
     $_SESSION['message'] = "You are not logged in.";
-    header("Location: ../index.php");
+    header("Location: ./index.php");
     exit();
 }
 
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeout_duration) {
     session_unset();
     session_destroy();
-    header("Location: ../index.php");
+    header("Location: ./index.php");
     exit();
 }
 
@@ -39,7 +39,7 @@ $activity_details = null;
 if ($activity_id) {
     $activity_sql = "SELECT * FROM activities WHERE activity_id = ? AND section_id = ?";
     $stmt = $conn->prepare($activity_sql);
-    if ($stmt) {    
+    if ($stmt) {
         $stmt->bind_param("ii", $activity_id, $section_id);
         if ($stmt->execute()) {
             $result = $stmt->get_result();
@@ -79,7 +79,11 @@ if (isset($_GET['documentation_id'])) {
             exit();
         }
 
-        $sql_images = "SELECT * FROM images WHERE documentation_id = ?";
+        $sql_images = "
+            SELECT images.*, user.last_name, user.first_name 
+            FROM images 
+            LEFT JOIN user ON images.uploaded_by = user.user_id 
+            WHERE documentation_id = ?";
         $stmt_images = $conn->prepare($sql_images);
         $stmt_images->bind_param("i", $album_id);
         $stmt_images->execute();
@@ -139,6 +143,18 @@ if (isset($_GET['documentation_id'])) {
     exit();
 }
 
+date_default_timezone_set('Asia/Manila');
+$can_upload = true; // Default to true
+if ($activity_details) {
+    $activity_date = $activity_details['date']; // Assuming 'date' is in 'YYYY-MM-DD' format
+    $current_date = date('Y-m-d'); // Get the current date in the same format
+
+    // Compare dates to determine if the upload form should be displayed
+    if (strtotime($current_date) !== strtotime($activity_date)) {
+        $can_upload = false; // Disable uploading if the current date is past the activity's date
+    }
+}
+
 $user_type = $_SESSION['user_type'];
 $_SESSION['last_activity'] = time();
 
@@ -161,7 +177,7 @@ $_SESSION['last_activity'] = time();
     </style>
 </head>
 
-<body class="bg-bg font-primary text-white my-8 mx-8 h-[100vh] overflow-y-hidden overflow-x-auto">
+<body class="bg-bg font-primary text-white my-8 mx-8 h-[100vh] overflow-y-auto overflow-x-auto">
 
 
     <div class="container mx-auto">
@@ -182,7 +198,7 @@ $_SESSION['last_activity'] = time();
         </div>
 
         <div class="flex h-full w-full">
-        <?php if ($_SESSION['user_type'] == 'nstp_coordinator' || $_SESSION['user_type'] == 'faculty'): ?>
+            <?php if ($_SESSION['user_type'] == 'nstp_coordinator' || $_SESSION['user_type'] == 'faculty'): ?>
                 <?php include './sidebar_faculty-src.php'; ?>
             <?php else: ?>
                 <?php include './sidebar_student-src.php'; ?>
@@ -208,7 +224,7 @@ $_SESSION['last_activity'] = time();
                 </div>
             </div>
         </div>
-        
+
 
         <!-- Documentation -->
         <div class="flex h-screen">
@@ -219,17 +235,24 @@ $_SESSION['last_activity'] = time();
                     </div>
 
                     <div class="mx-auto w-full flex mb-8 gap-2">
-                        <form action="" method="POST" enctype="multipart/form-data">
-                            <input type="file" name="image" id="image">
-                            <input class="bg-primary px-2 py-1 rounded-lg mt-4" type="submit" name="upload" value="Upload image">
-                        </form>
+                        <?php if ($can_upload): ?>
+                            <form action="" method="POST" enctype="multipart/form-data">
+                                <input type="file" name="image" id="image">
+                                <input class="bg-primary px-2 py-1 rounded-lg mt-4 hover:cursor-pointer hover:bg-red-700" type="submit" name="upload" value="Upload image">
+                            </form>
+                        <?php else: ?>
+                            <p class="text-gray-500">File uploads are disabled.</p>
+                        <?php endif; ?>
                     </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-10 mb-5">
                         <?php if ($result_images && mysqli_num_rows($result_images) > 0): ?>
                             <?php while ($image_row = mysqli_fetch_assoc($result_images)): ?>
                                 <div class="relative cursor-pointer" onclick="openLightbox('<?php echo $image_row['image']; ?>', <?php echo $image_row['image_id']; ?>)">
                                     <img src="<?php echo $image_row['image']; ?>" alt="Uploaded Image" class="w-full h-64 object-cover rounded-lg shadow-md" />
+                                    <div class="mt-2 text-center text-sm text-gray-700">
+                                        <p class="text-white">Uploaded by: <span class="font-semibold"><?php echo htmlspecialchars($image_row['first_name'] . ' ' . $image_row['last_name']); ?></span></p>
+                                    </div>
                                 </div>
                             <?php endwhile; ?>
                         <?php else: ?>
@@ -237,7 +260,7 @@ $_SESSION['last_activity'] = time();
                         <?php endif; ?>
                     </div>
 
-                    <div id="lightbox" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center lightbox" onclick="closeLightbox()">
+                    <div id="lightbox" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center lightbox z-50" onclick="closeLightbox()">
                         <span class="absolute left-4 text-white outline-2 outline-black text-[50px] cursor-pointer z-10" onclick="changeImage(-1, event)">&#10094;</span>
                         <img id="lightboxImage" src="" alt="Lightbox Image" class="max-w-[90%] max-h-[90%] rounded-lg z-1" />
                         <span class="absolute right-4 text-white outline-2 outline-black text-[50px] cursor-pointer z-10" onclick="changeImage(1, event)">&#10095;</span>
@@ -245,34 +268,6 @@ $_SESSION['last_activity'] = time();
 
                 </div>
             </div>
-
-            <!-- <div>
-                        <?php
-                        if (mysqli_num_rows($result) > 0) {
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                $album_name = urlencode($row['documentation_name']);
-                        ?>
-                                <div class="w-[100px]">
-                                    <a href="../view_album.php?album=<?php echo $album_name; ?>">
-                                        <div class="bg-white w-[100px] h-[100px]">
-                                            <div class="flex h-full justify-center items-center mx-2 z-10">
-                                                <span class="text-subtext text-[12px]">View album</span>
-                                            </div>
-                                            <a href="#"><img src="" alt=""></a>
-                                        </div>
-                                        <div class="">
-                                            <p><?php echo $row['documentation_name']; ?></p>
-                                        </div>
-                                    </a>
-                                </div>
-                        <?php
-                            }
-                        } else {
-                            echo "No documentation available.</p>";
-                        }
-                        ?>
-                        
-                    </div> -->
         </div>
     </div>
 
@@ -314,7 +309,7 @@ $_SESSION['last_activity'] = time();
         }
     </script>
 
-<script>
+    <script>
         let currentImageIndex = -1;
         let images = [];
 
@@ -322,15 +317,15 @@ $_SESSION['last_activity'] = time();
             const lightbox = document.getElementById('lightbox');
             const lightboxImage = document.getElementById('lightboxImage');
 
-            lightbox.style.display = 'flex'; 
-            lightboxImage.src = imageSrc; 
+            lightbox.style.display = 'flex';
+            lightboxImage.src = imageSrc;
 
             images = [];
             const imageWrappers = document.querySelectorAll('.grid div img');
             imageWrappers.forEach((img, index) => {
                 images.push(img.src);
                 if (img.src === imageSrc) {
-                    currentImageIndex = index; 
+                    currentImageIndex = index;
                 }
             });
 
@@ -359,11 +354,11 @@ $_SESSION['last_activity'] = time();
 
         function handleKeyPress(event) {
             if (event.key === "ArrowLeft") {
-                changeImage(-1, event); 
+                changeImage(-1, event);
             } else if (event.key === "ArrowRight") {
-                changeImage(1, event); 
+                changeImage(1, event);
             } else if (event.key === "Escape") {
-                closeLightbox(event); 
+                closeLightbox(event);
             }
         }
     </script>
