@@ -1,4 +1,6 @@
-connect.php
+**SMC NSTP Management System**
+
+Add this line of code if system in connect.php is hosted
 session_set_cookie_params([
      'lifetime' => 0,
      'path' => '/',
@@ -7,9 +9,3 @@ session_set_cookie_params([
      'httponly' => true,
      'samesite' => 'Lax',
 ]);
-
-index.php
-code.php
-sign_up.php
-registrar_home.php
-generate_certificate.php
