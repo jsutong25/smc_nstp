@@ -5,6 +5,7 @@ include '../connect.php';
 $user_id = $_SESSION['user_id'];
 
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : null;
+$course_id = isset($_GET['course_id']) ? $_GET['course_id'] : null;
 $user_type = $_SESSION['user_type'];
 
 if ($user_type == 'student') {
@@ -17,50 +18,44 @@ if (!isset($user_id)) {
     exit();
 }
 
-$section = [
-    'section_name' => '',
-    'schedule' => '',
-    'faculty_id' => '' 
+$course = [
+    'name' => '',
+    'insti_code' => ''
 ];
 
-if ($section_id) {
+if ($course_id) {
     
-    $sql = "SELECT * FROM section WHERE section_id = $section_id"; 
+    $sql = "SELECT * FROM course WHERE course_id = $course_id"; 
     $result = mysqli_query($conn, $sql);
 
     if ($result && mysqli_num_rows($result) > 0) {
-        $section = mysqli_fetch_assoc($result); 
+        $course = mysqli_fetch_assoc($result); 
     } else {
-        $_SESSION['message'] = "Section not found.";
-        header("Location: ./sections.php?section_id=$section_id");
+        $_SESSION['message'] = "Course not found.";
+        header("Location: ./faculty_information.php?section_id=$section_id");
         exit();
     }
 }
-
-$sql_faculty = "SELECT user_id, last_name FROM user WHERE user_type IN ('faculty', 'nstp_coordinator')"; 
-$result_faculty = mysqli_query($conn, $sql_faculty);
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $section_name = $_POST['section_name'];
-    $schedule = implode(",", $_POST['schedule']);
-    $faculty_id = intval($_POST['faculty_id']); 
+    $course_name = $_POST['course_name'];
+    $insti_code = $_POST['insti_code'];
 
-    
-    $sql = "UPDATE section SET section_name = '$section_name', schedule = '$schedule', faculty_id = '$faculty_id' WHERE section_id = '$section_id'";
+    $sql = "UPDATE course SET name = '$course_name', insti_code = '$insti_code' WHERE course_id = '$course_id'";
 
     if (mysqli_query($conn, $sql)) {
-        $_SESSION['message'] = "Activity updated successfully.";
+        $_SESSION['message'] = "Course updated successfully.";
         header("Location: ./faculty_information.php?section_id=$section_id"); 
         exit();
     } else {
-        $_SESSION['message'] = "Failed to update activity.";
-        header("Location: ./edit_section.php?section_id=$section_id"); 
+        $_SESSION['message'] = "Failed to update course.";
+        header("Location: ./edit_course.php?section_id=$section_id&course_id=$course_id"); 
         exit();
     }
 }
-$sql_sections = "SELECT * FROM section WHERE faculty_id = $user_id";
-$result_section = mysqli_query($conn, $sql_sections);
+$sql_course = "SELECT * FROM course WHERE course_id = $course_id";
+$result_course = mysqli_query($conn, $sql_course);
 
 
 $conn->close();
@@ -101,49 +96,16 @@ $conn->close();
 
             <div class="mx-auto w-full sm:w-[500px] md:w-[600px] h-[65vh] content-center flex-grow p-4 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[230px]">
                 <div class="mb-8">
-                    <h1 class="text-center text-[32px]">Edit Section</h1>
+                    <h1 class="text-center text-[32px]">Edit Course</h1>
                 </div>
                 <div class="">
                     <form action="" class="flex flex-col" method="POST">
-                        <label class="text-[16px]" for="section_name">Section Name:<span class="text-primary ml-1">*</span></label>
-                        <input autocomplete="off" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="section_name" value="<?php echo htmlspecialchars($section['section_name']); ?>" required type="text">
+                        <label class="text-[16px]" for="course_name">Course Name:<span class="text-primary ml-1">*</span></label>
+                        <input autocomplete="off" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="course_name" value="<?php echo htmlspecialchars($course['name']); ?>" required type="text">
 
-                        <label class="text-[16px]" for="schedule">Schedule:<span class="text-primary ml-1">*</span></label>
-                        <div class="flex flex-wrap gap-2 mt-2 mb-2">
-                            <?php
-                            // Convert the saved schedule string into an array
-                            $saved_schedule = explode(",", $section['schedule']); // Example: "M,T,W,Th,F" → ['M', 'T', 'W', 'Th', 'F']
-
-                            // Define the possible days
-                            $days = ["M" => "M", "T" => "T", "W" => "W", "Th" => "Th", "F" => "F", "S" => "S"];
-
-                            // Loop through each day to generate checkboxes
-                            foreach ($days as $key => $label) {
-                                // Check if this day was previously selected
-                                $checked = in_array($key, $saved_schedule) ? "checked" : "";
-                                echo '<label class="inline-flex items-center">
-                                        <input type="checkbox" name="schedule[]" value="' . $key . '" class="form-checkbox" ' . $checked . '>
-                                        <span class="ml-2">' . $label . '</span> 
-                                    </label>';
-                            }
-                            ?>
-                        </div>
-
-                        <label for="faculty_id">Faculty<span class="text-primary ml-1">*</span></label>
-                        <select class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="faculty_id" required>
-                            <?php if ($result_faculty && mysqli_num_rows($result_faculty) > 0): ?>
-                                <option value="">--- Select ---</option>
-                                <?php while ($faculty = mysqli_fetch_assoc($result_faculty)): ?>
-                                    <option value="<?php echo $faculty['user_id']; ?>" <?php echo $faculty['user_id'] == $section['faculty_id'] ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($faculty['last_name']); ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            <?php else: ?>
-                                <option value="">No faculty available</option>
-                            <?php endif; ?>
-                        </select>
-
-                        <input class="bg-primary py-3 rounded-full mt-9 hover:cursor-pointer hover:bg-red-700" type="submit" value="Update Section">
+                        <label class="text-[16px]" for="insti_code">Institutional Code:<span class="text-primary ml-1"></span></label>
+                        <input autocomplete="off" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="insti_code" value="<?php echo htmlspecialchars($course['insti_code']); ?>" type="text">
+                        <input class="bg-primary py-3 rounded-full mt-9 hover:cursor-pointer hover:bg-red-700" type="submit" value="Update Course">
                     </form>
                 </div>
             </div>

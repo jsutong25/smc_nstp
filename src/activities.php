@@ -47,7 +47,7 @@ if ($section_id) {
         SELECT a.*, d.documentation_id
         FROM activities a
         LEFT JOIN documentation d ON a.activity_id = d.activity_id
-        WHERE a.section_id = ? AND CONCAT(a.date, ' ', a.time) > NOW()
+        WHERE a.section_id = ? AND a.date >= CURDATE()
         ORDER BY a.date, a.time ASC";
 
     $stmt = $conn->prepare($activities_sql);
@@ -78,9 +78,6 @@ if (isset($_POST['delete_activity'])) {
     header("Location: ./activities.php?section_id=$section_id");
     exit();
 }
-
-$sql = "SELECT * FROM activities WHERE CONCAT(date, ' ', time) > NOW() ORDER by date, time ASC";
-$result = mysqli_query($conn, $sql);
 
 $_SESSION['last_activity'] = time();
 

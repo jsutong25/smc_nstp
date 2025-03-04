@@ -112,7 +112,6 @@ $conn->close();
                             <option value="">--- Select ---</option>
                             <option value="faculty">Faculty</option>
                             <option value="nstp_coordinator">NSTP Coordinator</option>
-                            <option value="admin">Admin</option>
                         </select>
 
                         <label class="text-[16px]" for="password">Password:<span class="text-primary ml-1">*</span></label>

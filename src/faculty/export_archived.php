@@ -17,9 +17,27 @@ if (isset($_POST['user_ids']) && isset($_POST['archived_year'])) {
     $user_ids = $_POST['user_ids'];
     $archived_year = $_POST['archived_year'];
 
+    // Fetch unique program names for the given users
+    $sql = "SELECT DISTINCT program FROM user WHERE user_id IN ($user_ids)";
+    $result = $conn->query($sql);
+
+    $programs = [];
+    while ($row = $result->fetch_assoc()) {
+        $programs[] = $row['program'];
+    }
+
+    // Convert program names to a single string, replacing spaces with underscores
+    $program_name = implode("_", $programs);
+    if (empty($program_name)) {
+        $program_name = "NSTP"; // Default if no program found
+    }
+
+    // Set the filename dynamically
+    $filename = "{$archived_year}_NSTP_Class_-_{$program_name}.xlsx";
+
     // Set headers to trigger a file download
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="' . $archived_year . '_NSTP_Class.xlsx"');
+    header("Content-Disposition: attachment;filename=\"$filename\"");
     header('Cache-Control: max-age=0');
 
     // Create a new spreadsheet
@@ -41,8 +59,11 @@ if (isset($_POST['user_ids']) && isset($_POST['archived_year'])) {
         $column++;
     }
 
-    // Query archived data for the specific year
-    $sql = "SELECT * FROM user WHERE user_id IN ($user_ids) AND archive = 1";
+    // Query archived data for the specific year with institutional code
+    $sql = "SELECT u.*, c.insti_code 
+            FROM user u
+            LEFT JOIN course c ON u.course = c.name
+            WHERE u.user_id IN ($user_ids) AND u.archive = 1";
     $result = $conn->query($sql);
 
     // Add data rows if records are found
@@ -66,7 +87,11 @@ if (isset($_POST['user_ids']) && isset($_POST['archived_year'])) {
             $sheet->setCellValue('M' . $rowIndex, $row['city']);
             $sheet->setCellValue('N' . $rowIndex, $row['province']);
             $sheet->setCellValue('O' . $rowIndex, 'St. Michael\'s College of Iligan, Inc.'); // HEI Name
-            $sheet->setCellValue('P' . $rowIndex, '12062'); // Institutional Code
+
+            // Set institutional code dynamically
+            $insti_code = !empty($row['insti_code']) ? $row['insti_code'] : 'Unknown';
+            $sheet->setCellValue('P' . $rowIndex, $insti_code);
+
             $sheet->setCellValue('Q' . $rowIndex, 'Private'); // Types of HEIS
             $sheet->setCellValue('R' . $rowIndex, '340101'); // Program Level Code
             $sheet->setCellValue('S' . $rowIndex, $row['course']);

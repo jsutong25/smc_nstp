@@ -166,7 +166,28 @@ $conn->close();
           </select>
 
           <label for="course">Course:<span class="text-primary ml-1">*</span></label>
-          <input autocomplete="off" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="course" placeholder="Enter your course (Ex: BSBA, BSIT, BSN)" type="text" required>
+          <select id="course" name="course" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" required>
+              <option value="" disabled selected>Select course</option>
+              <?php
+              include "./connect.php";
+              
+              $sql_course = "SELECT * FROM course";
+              $result_course = $conn->query($sql_course);
+
+              $courses = []; // Array to store course details for JavaScript
+              if ($result_course->num_rows > 0) {
+                  while ($row = $result_course->fetch_assoc()) {
+                      echo "<option value='" . $row['course_id'] . "' data-code='" . $row['insti_code'] . "'>" . $row['name'] . "</option>";
+                      $courses[] = $row; // Store course data for JavaScript
+                  }
+              }
+              ?>
+          </select>
+            
+          <!-- INSTITUIONAL CODE -->
+          <!-- <label for="institutional_code">Institutional Code:<span class="text-primary ml-1">*</span></label>
+          <input id="institutional_code" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" type="text" disabled> -->
+
 
           <label for="barangay">Barangay:<span class="text-primary ml-1">*</span></label>
           <input autocomplete="off" class="bg-bg border-2 border-white rounded-full py-3 mt-2 mb-2" style="padding-left: 2em; padding-right: 2em;" name="barangay" placeholder="Enter your barangay" type="text" required>
@@ -214,6 +235,15 @@ $conn->close();
       }
     }
   </script>
+
+  <!-- <script>
+  document.getElementById('course').addEventListener('change', function() {
+      let selectedOption = this.options[this.selectedIndex];
+      let instiCode = selectedOption.getAttribute('data-code'); // Get institutional code from data attribute
+      document.getElementById('institutional_code').value = instiCode; // Set institutional code
+  });
+  </script> -->
+
 </body>
 
 </html>

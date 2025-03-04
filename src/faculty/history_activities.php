@@ -47,7 +47,7 @@ if ($section_id) {
         SELECT a.*, d.documentation_id
         FROM activities a
         LEFT JOIN documentation d ON a.activity_id = d.activity_id
-        WHERE a.section_id = ? AND CONCAT(a.date, ' ', a.time) < NOW()
+        WHERE a.section_id = ? AND a.date < CURDATE()
         ORDER BY a.date, a.time DESC";
 
     $stmt = $conn->prepare($sql);

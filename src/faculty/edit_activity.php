@@ -21,12 +21,12 @@ if (isset($_GET['activity_id'])) {
         $activity = mysqli_fetch_assoc($result);
     } else {
         $_SESSION['message'] = "Activity not found.";
-        header("Location: ./activities.php?section_id=$section_id");
+        header("Location: ../activities.php?section_id=$section_id");
         exit();
     }
 } else {
     $_SESSION['message'] = "No activity selected.";
-    header("Location: ./activities.php?section_id=$section_id");
+    header("Location: ../activities.php?section_id=$section_id");
     exit();
 }
 
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (mysqli_query($conn, $sql)) {
         $_SESSION['message'] = "Activity updated successfully.";
-        header("Location: ./activities.php?section_id=$section_id");
+        header("Location: ../activities.php?section_id=$section_id");
         exit();
     } else {
         $_SESSION['message'] = "Failed to update activity.";

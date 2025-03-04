@@ -52,7 +52,7 @@ if ($section_id) {
         SELECT a.*, d.documentation_id
         FROM activities a
         LEFT JOIN documentation d ON a.activity_id = d.activity_id
-        WHERE a.section_id = ? AND CONCAT(a.date, ' ', a.time) > NOW()
+        WHERE a.section_id = ? AND a.date >= NOW()
         ORDER BY a.date, a.time ASC";
 
     $stmt = $conn->prepare($activities_sql);
@@ -67,9 +67,6 @@ if ($section_id) {
         echo "Query preparation failed: " . $conn->error;
     }
 }
-
-$sql = "SELECT * FROM activities WHERE CONCAT(date, ' ', time) > NOW() ORDER by date, time ASC";
-$result = mysqli_query($conn, $sql);
 
 $_SESSION['last_activity'] = time();
 

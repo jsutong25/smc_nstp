@@ -35,6 +35,19 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
     exit();
 }
 
+$programs = [];
+if (!empty($user_ids)) {
+    $sql = "SELECT DISTINCT program FROM user WHERE user_id IN ($user_ids)";
+    $result = $conn->query($sql);
+
+    while ($row = $result->fetch_assoc()) {
+        $programs[] = $row['program'];
+    }
+}
+
+// Convert program names to a single string (replace spaces with underscores for consistency)
+$program_name = !empty($programs) ? implode("_", $programs) : "NSTP";
+
 $_SESSION['last_activity'] = time();
 
 ?>
@@ -183,25 +196,34 @@ $_SESSION['last_activity'] = time();
                 </div>
 
                 <div class="w-full mt-10">
-                    <?php
-                    // Fetching the archived classes and displaying the button
-                    $query = "SELECT archived_year, GROUP_CONCAT(user_id) as user_ids FROM user WHERE archive = 1 GROUP BY archived_year";
-                    $result = mysqli_query($conn, $query);
+                <?php
+                // Fetching the archived classes and displaying the button
+                $query = "SELECT archived_year, program, GROUP_CONCAT(user_id) as user_ids 
+                            FROM user 
+                            WHERE archive = 1 
+                            GROUP BY archived_year, program";
+                $result = mysqli_query($conn, $query);
 
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        $archived_year = $row['archived_year'];
-                        $user_ids = $row['user_ids'];
-
-                        echo "
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $archived_year = $row['archived_year'];
+                    $program = $row['program']; // Get the program directly
+                    $user_ids = $row['user_ids'];
+                
+                    // Convert program name format (replace spaces with underscores)
+                    $program_name = !empty($program) ? str_replace(' ', '_', $program) : "NSTP";
+                
+                    echo "
                     <form action='export_archived.php' method='post' class='inline'>
-                        <input type='hidden' name='archived_year' value='$archived_year'>
-                        <input type='hidden' name='user_ids' value='$user_ids'>
+                        <input type='hidden' name='archived_year' value='" . htmlspecialchars($archived_year) . "'>
+                        <input type='hidden' name='user_ids' value='" . htmlspecialchars($user_ids) . "'>
+                        <input type='hidden' name='program_name' value='" . htmlspecialchars($program_name) . "'>
                         <button type='submit' class='download-btn hover:text-primary hover:underline'>
-                            --- $archived_year NSTP Class [Click to download] ---
+                            --- " . htmlspecialchars($archived_year) . " NSTP Class - " . htmlspecialchars($program) . " [Click to download] ---
                         </button>
-                    </form>";
-                    }
-                    ?>
+                    </form>
+                    <br>";
+                }
+                ?>
                 </div>
             </div>
         </div>

@@ -182,7 +182,7 @@ $_SESSION['last_activity'] = time();
     </style>
 </head>
 
-<body class="bg-bg font-primary text-white my-8 mx-8 h-[100vh] overflow-x-auto">
+<body class="bg-bg font-primary text-white my-8 mx-8 overflow-x-auto">
 
 
     <div class="container mx-auto">
@@ -202,7 +202,7 @@ $_SESSION['last_activity'] = time();
                 </svg></a>
         </div>
 
-        <div class="flex h-screen w-full">
+        <div class="flex w-full">
             <?php include '../sidebar_faculty.php'; ?>
 
             <div class="flex-grow p-4 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
@@ -223,10 +223,11 @@ $_SESSION['last_activity'] = time();
                         <?php endwhile; ?>
                     <?php endif; ?>
                 </div>
-
-                <div class="h-full">
+                
+                <!-- STUDENT INFORMATION - CWTS -->
+                <div class="mb-10">
                     <div class="">
-                        <h2 class="text-[24px]">Student Information</h2>
+                        <h2 class="text-[24px]">Student Information - CWTS</h2>
                     </div>
 
                     <div class="bg-white p-2 rounded-md">
@@ -236,124 +237,386 @@ $_SESSION['last_activity'] = time();
                             <label for="prefix">Enter Serial Number Prefix:</label>
                             <input class="border border-gray-900" type="text" id="prefix" name="prefix" value="">
                             <button class="bg-primary rounded-lg px-2 py-1 text-white" type="submit">Generate</button>
-                        </form>
+                        
 
-                        <div class="mt-2">
-                            <a class="text-primary underline mb-2" href="./serial.txt" download="serial.txt">
-                                Instructions on how to generate serial numbers
-                            </a>
-                        </div>
+                            <div class="mt-2">
+                                <a class="text-primary underline mb-2" href="./serial.txt" download="serial.txt">
+                                    Instructions on how to generate serial numbers
+                                </a>
+                            </div>
+                            <?php endif; ?>
                         <?php endif; ?>
-                    <?php endif; ?>
 
-                        <table id="student" class="display" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th class="uppercase">No.</th>
-                                    <th class="uppercase">Award Year</th>
-                                    <th class="uppercase">Program</th>
-                                    <th class="uppercase">Region</th>
-                                    <th class="uppercase">Serial Number</th>
-                                    <th class="uppercase">Last Name</th>
-                                    <th class="uppercase">First Name</th>
-                                    <th class="uppercase">Middle Name</th>
-                                    <th class="uppercase">Extension Name</th>
-                                    <th class="uppercase">Birthdate</th>
-                                    <th class="uppercase">Sex</th>
-                                    <th class="uppercase">Barangay</th>
-                                    <th class="uppercase">City</th>
-                                    <th class="uppercase">Province</th>
-                                    <th class="uppercase hidden">HEI Name</th>
-                                    <th class="uppercase hidden">Institutional Code</th>
-                                    <th class="uppercase hidden">Types of HEIS</th>
-                                    <th class="uppercase hidden">Program Level Code</th>
-                                    <th class="uppercase">Main Program Name</th>
-                                    <th class="uppercase">Email Address</th>
-                                    <th class="uppercase">Contact Number</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    if(!$section_id) {
-                                        echo "<tr><td colspan='15'>Please select a section</td></tr>";
-                                    }
-                                ?>
-                                <?php
-                                if ($section_name == "All" || $section_name == "all" || $section_name == "ALL") {
-                                    $sql = "SELECT * FROM user WHERE user_type = 'student' AND archive = 0";
-                                } else {
-                                    $sql = "SELECT * FROM user WHERE user_type = 'student' AND section = '$section_id' AND archive = 0";
-                                    }
-
-                                    $result = $conn->query($sql);
-
-                                    if ($result->num_rows > 0) {
-                                        $ayear = date("Y");
-                                        $number = 1;
-                                        while ($row = $result->fetch_assoc()) {
-                                            echo "<tr class='user-row' data-user-id='{$row['user_id']}'>
-                                                    <td class='uppercase'>$number</td>
-                                                    <td class='uppercase'>$ayear</td>
-                                                    <td class='uppercase'>{$row['program']}</td>
-                                                    <td class='uppercase'>10</td>
-                                                    <td class='uppercase'>{$row['serial_number']}</td>
-                                                    <td class='uppercase'>{$row['last_name']}</td>
-                                                    <td class='uppercase'>{$row['first_name']}</td>
-                                                    <td class='uppercase'>{$row['middle_name']}</td>
-                                                    <td class='uppercase'>{$row['extension_name']}</td>
-                                                    <td class='uppercase'>{$row['birthday']}</td>
-                                                    <td class='uppercase'>{$row['sex']}</td>
-                                                    <td class='uppercase'>{$row['barangay']}</td>
-                                                    <td class='uppercase'>{$row['city']}</td>
-                                                    <td class='uppercase'>{$row['province']}</td>
-                                                    <td class='uppercase hidden'>St. Michael's College of Iligan, Inc.</td>
-                                                    <td class='uppercase hidden'>12062</td>
-                                                    <td class='uppercase hidden'>Private</td>
-                                                    <td class='uppercase hidden'>340101</td>
-                                                    <td class='uppercase'>{$row['course']}</td>
-                                                    <td class='uppercase'>{$row['email']}</td>
-                                                    <td class='uppercase'>{$row['contact_number']}</td>
-                                                </tr>";
-                                                $number++;
+                            <table id="cwtsTable" class="display" style="width:100%">
+                                <thead class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
+                                    <tr>
+                                        <th class="uppercase">Select All<input type="checkbox" id="selectAllCWTS"></th>
+                                        <th class="uppercase">No.</th>
+                                        <th class="uppercase">Award Year</th>
+                                        <th class="uppercase">Program</th>
+                                        <th class="uppercase">Region</th>
+                                        <th class="uppercase">Serial Number</th>
+                                        <th class="uppercase">Last Name</th>
+                                        <th class="uppercase">First Name</th>
+                                        <th class="uppercase">Middle Name</th>
+                                        <th class="uppercase">Extension Name</th>
+                                        <th class="uppercase">Birthdate</th>
+                                        <th class="uppercase">Sex</th>
+                                        <th class="uppercase">Barangay</th>
+                                        <th class="uppercase">City</th>
+                                        <th class="uppercase">Province</th>
+                                        <th class="uppercase">HEI Name</th>
+                                        <th class="uppercase">Institutional Code</th>
+                                        <th class="uppercase">Types of HEIS</th>
+                                        <th class="uppercase">Program Level Code</th>
+                                        <th class="uppercase">Main Program Name</th>
+                                        <th class="uppercase">Email Address</th>
+                                        <th class="uppercase">Contact Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
+                                    <?php
+                                        if(!$section_id) {
+                                            echo "<tr><td colspan='15'>Please select a section</td></tr>";
                                         }
-                                    } else {
-                                        echo "<tr><td colspan='15'>No data found</td></tr>";
-                                    }
-
-                                    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['prefix'])) {
-                                        $prefix = $_POST['prefix'];
-                                        $number_serial = 1;
-                        
-                                        // Fetch data again to update serial numbers in the database
+                                    ?>
+                                    <?php
+                                        if ($section_name == "All" || $section_name == "all" || $section_name == "ALL") {
+                                            $sql = "SELECT u.*, c.insti_code FROM user u 
+                                                    LEFT JOIN course c ON u.course = c.name
+                                                    WHERE u.user_type = 'student' AND u.archive = 0 AND u.program = 'CWTS'";
+                                        } else {
+                                            $sql = "SELECT u.*, c.insti_code FROM user u 
+                                                    LEFT JOIN course c ON u.course = c.name
+                                                    WHERE u.user_type = 'student' AND u.section = '$section_id' AND u.archive = 0 AND u.program = 'CWTS'";
+                                        }
+                                        
                                         $result = $conn->query($sql);
-                        
+                                        
                                         if ($result->num_rows > 0) {
+                                            $ayear = date("Y");
+                                            $number = 1;
                                             while ($row = $result->fetch_assoc()) {
+                                                echo "<tr class='user-row px-1 gap-1' data-user-id='{$row['user_id']}'>
+                                                        <td class='uppercase mx-auto'><input class='select-checkbox' type='checkbox' name='selected_students[]' value='{$row['user_id']}'></td>
+                                                        <td class='uppercase'>$number</td>
+                                                        <td class='uppercase'>$ayear</td>
+                                                        <td class='uppercase'>{$row['program']}</td>
+                                                        <td class='uppercase'>10</td>
+                                                        <td class='uppercase'>{$row['serial_number']}</td>
+                                                        <td class='uppercase'>{$row['last_name']}</td>
+                                                        <td class='uppercase'>{$row['first_name']}</td>
+                                                        <td class='uppercase'>{$row['middle_name']}</td>
+                                                        <td class='uppercase'>{$row['extension_name']}</td>
+                                                        <td class='uppercase'>{$row['birthday']}</td>
+                                                        <td class='uppercase'>{$row['sex']}</td>
+                                                        <td class='uppercase'>{$row['barangay']}</td>
+                                                        <td class='uppercase'>{$row['city']}</td>
+                                                        <td class='uppercase'>{$row['province']}</td>
+                                                        <td class='uppercase'>St. Michael's College of Iligan, Inc.</td>
+                                                        <td class='uppercase'>{$row['insti_code']}</td>
+                                                        <td class='uppercase'>Private</td>
+                                                        <td class='uppercase'>340101</td>
+                                                        <td class='uppercase'>{$row['course']}</td>
+                                                        <td class='uppercase'>{$row['email']}</td>
+                                                        <td class='uppercase'>{$row['contact_number']}</td>
+                                                    </tr>";
+                                                $number++;
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='15'>No data found</td></tr>";
+                                        }
+
+                                        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['prefix'], $_POST['selected_students'])) {
+                                            $prefix = $_POST['prefix'];
+                                            $selected_students = $_POST['selected_students']; // Array of checked students
+                                            $number_serial = 1;
+                                        
+                                            foreach ($selected_students as $user_id) {
                                                 // Generate the new serial number
                                                 $serial_number = str_replace('_', $number_serial, $prefix);
-                                                
+                                        
                                                 // Update the serial number in the database
-                                                $update_sql = "UPDATE user SET serial_number = '$serial_number' WHERE user_id = '{$row['user_id']}'";
+                                                $update_sql = "UPDATE user SET serial_number = '$serial_number' WHERE user_id = '$user_id'";
                                                 $conn->query($update_sql);
-                        
+                                        
                                                 $number_serial++;
                                             }
                                         }
-                                    }
-
-                                    $conn->close();
-                                
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
-                    <form action="" method="post">
-                        <button id="archiveButton" class="bg-primary px-3 py-1 rounded-lg mt-5">Archive Displayed Records</button>
+                                    ?>
+                                </tbody>
+                                <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
+                            </table>
+                            <form action="" method="post">
+                        <button id="archiveCwtsButton" class="bg-primary px-3 py-1 rounded-lg mt-5 text-white mb-5">Archive Records</button>
                     </form>
                     <?php endif; ?>
-
+                        </form>
+                    </div>
                 </div>
+                
+                <!-- STUDENT INFORMATION - LTS -->
+                <div class="mb-10">
+                    <div class="">
+                        <h2 class="text-[24px]">Student Information - LTS</h2>
+                    </div>
+
+                    <div class="bg-white p-2 rounded-md">
+                    <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
+                        <?php if ($section_name == "All" || $section_name == "all" || $section_name == "ALL"): ?>
+                        <form class="text-gray-900" method="post">
+                            <label for="prefix">Enter Serial Number Prefix:</label>
+                            <input class="border border-gray-900" type="text" id="prefix" name="prefix" value="">
+                            <button class="bg-primary rounded-lg px-2 py-1 text-white" type="submit">Generate</button>
+                        
+
+                            <div class="mt-2">
+                                <a class="text-primary underline mb-2" href="./serial.txt" download="serial.txt">
+                                    Instructions on how to generate serial numbers
+                                </a>
+                            </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                            <table id="ltsTable" class="display" style="width:100%">
+                                <thead class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
+                                    <tr>
+                                        <th class="uppercase">Select All<input type="checkbox" id="selectAllLts"></th>
+                                        <th class="uppercase">No.</th>
+                                        <th class="uppercase">Award Year</th>
+                                        <th class="uppercase">Program</th>
+                                        <th class="uppercase">Region</th>
+                                        <th class="uppercase">Serial Number</th>
+                                        <th class="uppercase">Last Name</th>
+                                        <th class="uppercase">First Name</th>
+                                        <th class="uppercase">Middle Name</th>
+                                        <th class="uppercase">Extension Name</th>
+                                        <th class="uppercase">Birthdate</th>
+                                        <th class="uppercase">Sex</th>
+                                        <th class="uppercase">Barangay</th>
+                                        <th class="uppercase">City</th>
+                                        <th class="uppercase">Province</th>
+                                        <th class="uppercase">HEI Name</th>
+                                        <th class="uppercase">Institutional Code</th>
+                                        <th class="uppercase">Types of HEIS</th>
+                                        <th class="uppercase">Program Level Code</th>
+                                        <th class="uppercase">Main Program Name</th>
+                                        <th class="uppercase">Email Address</th>
+                                        <th class="uppercase">Contact Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
+                                    <?php
+                                        if(!$section_id) {
+                                            echo "<tr><td colspan='15'>Please select a section</td></tr>";
+                                        }
+                                    ?>
+                                    <?php
+                                        if ($section_name == "All" || $section_name == "all" || $section_name == "ALL") {
+                                            $sql = "SELECT u.*, c.insti_code FROM user u 
+                                                    LEFT JOIN course c ON u.course = c.name
+                                                    WHERE u.user_type = 'student' AND u.archive = 0 AND u.program = 'LTS'";
+                                        } else {
+                                            $sql = "SELECT u.*, c.insti_code FROM user u 
+                                                    LEFT JOIN course c ON u.course = c.name
+                                                    WHERE u.user_type = 'student' AND u.section = '$section_id' AND u.archive = 0 AND u.program = 'LTS'";
+                                        }
+                                        
+                                        $result = $conn->query($sql);
+                                        
+                                        if ($result->num_rows > 0) {
+                                            $ayear = date("Y");
+                                            $number = 1;
+                                            while ($row = $result->fetch_assoc()) {
+                                                echo "<tr class='user-row px-1 gap-1' data-user-id='{$row['user_id']}'>
+                                                        <td class='uppercase mx-auto'><input class='select-checkbox' type='checkbox' name='selected_students[]' value='{$row['user_id']}'></td>
+                                                        <td class='uppercase'>$number</td>
+                                                        <td class='uppercase'>$ayear</td>
+                                                        <td class='uppercase'>{$row['program']}</td>
+                                                        <td class='uppercase'>10</td>
+                                                        <td class='uppercase'>{$row['serial_number']}</td>
+                                                        <td class='uppercase'>{$row['last_name']}</td>
+                                                        <td class='uppercase'>{$row['first_name']}</td>
+                                                        <td class='uppercase'>{$row['middle_name']}</td>
+                                                        <td class='uppercase'>{$row['extension_name']}</td>
+                                                        <td class='uppercase'>{$row['birthday']}</td>
+                                                        <td class='uppercase'>{$row['sex']}</td>
+                                                        <td class='uppercase'>{$row['barangay']}</td>
+                                                        <td class='uppercase'>{$row['city']}</td>
+                                                        <td class='uppercase'>{$row['province']}</td>
+                                                        <td class='uppercase'>St. Michael's College of Iligan, Inc.</td>
+                                                        <td class='uppercase'>{$row['insti_code']}</td>
+                                                        <td class='uppercase'>Private</td>
+                                                        <td class='uppercase'>340101</td>
+                                                        <td class='uppercase'>{$row['course']}</td>
+                                                        <td class='uppercase'>{$row['email']}</td>
+                                                        <td class='uppercase'>{$row['contact_number']}</td>
+                                                    </tr>";
+                                                $number++;
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='15'>No data found</td></tr>";
+                                        }
+
+                                        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['prefix'], $_POST['selected_students'])) {
+                                            $prefix = $_POST['prefix'];
+                                            $selected_students = $_POST['selected_students']; // Array of checked students
+                                            $number_serial = 1;
+                                        
+                                            foreach ($selected_students as $user_id) {
+                                                // Generate the new serial number
+                                                $serial_number = str_replace('_', $number_serial, $prefix);
+                                        
+                                                // Update the serial number in the database
+                                                $update_sql = "UPDATE user SET serial_number = '$serial_number' WHERE user_id = '$user_id'";
+                                                $conn->query($update_sql);
+                                        
+                                                $number_serial++;
+                                            }
+                                        }
+                                    ?>
+                                </tbody>
+                                <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
+                            </table>
+                            <form action="" method="post">
+                        <button id="archiveLtsButton" class="bg-primary px-3 py-1 rounded-lg mt-5 text-white mb-5">Archive Records</button>
+                    </form>
+                    <?php endif; ?>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- STUDENT INFORMATION - ROTC -->
+                <div class="mb-10">
+                    <div class="">
+                        <h2 class="text-[24px]">Student Information - ROTC</h2>
+                    </div>
+
+                    <div class="bg-white p-2 rounded-md">
+                    <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
+                        <?php if ($section_name == "All" || $section_name == "all" || $section_name == "ALL"): ?>
+                        <form class="text-gray-900" method="post">
+                            <label for="prefix">Enter Serial Number Prefix:</label>
+                            <input class="border border-gray-900" type="text" id="prefix" name="prefix" value="">
+                            <button class="bg-primary rounded-lg px-2 py-1 text-white" type="submit">Generate</button>
+                        
+
+                            <div class="mt-2">
+                                <a class="text-primary underline mb-2" href="./serial.txt" download="serial.txt">
+                                    Instructions on how to generate serial numbers
+                                </a>
+                            </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                            <table id="rotcTable" class="display" style="width:100%">
+                                <thead class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
+                                    <tr>
+                                        <th class="uppercase">Select All<input type="checkbox" id="selectAllRotc"></th>
+                                        <th class="uppercase">No.</th>
+                                        <th class="uppercase">Award Year</th>
+                                        <th class="uppercase">Program</th>
+                                        <th class="uppercase">Region</th>
+                                        <th class="uppercase">Serial Number</th>
+                                        <th class="uppercase">Last Name</th>
+                                        <th class="uppercase">First Name</th>
+                                        <th class="uppercase">Middle Name</th>
+                                        <th class="uppercase">Extension Name</th>
+                                        <th class="uppercase">Birthdate</th>
+                                        <th class="uppercase">Sex</th>
+                                        <th class="uppercase">Barangay</th>
+                                        <th class="uppercase">City</th>
+                                        <th class="uppercase">Province</th>
+                                        <th class="uppercase">HEI Name</th>
+                                        <th class="uppercase">Institutional Code</th>
+                                        <th class="uppercase">Types of HEIS</th>
+                                        <th class="uppercase">Program Level Code</th>
+                                        <th class="uppercase">Main Program Name</th>
+                                        <th class="uppercase">Email Address</th>
+                                        <th class="uppercase">Contact Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
+                                    <?php
+                                        if(!$section_id) {
+                                            echo "<tr><td colspan='15'>Please select a section</td></tr>";
+                                        }
+                                    ?>
+                                    <?php
+                                        if ($section_name == "All" || $section_name == "all" || $section_name == "ALL") {
+                                            $sql = "SELECT u.*, c.insti_code FROM user u 
+                                                    LEFT JOIN course c ON u.course = c.name
+                                                    WHERE u.user_type = 'student' AND u.archive = 0 AND u.program = 'ROTC'";
+                                        } else {
+                                            $sql = "SELECT u.*, c.insti_code FROM user u 
+                                                    LEFT JOIN course c ON u.course = c.name
+                                                    WHERE u.user_type = 'student' AND u.section = '$section_id' AND u.archive = 0 AND u.program = 'ROTC'";
+                                        }
+                                        
+                                        $result = $conn->query($sql);
+                                        
+                                        if ($result->num_rows > 0) {
+                                            $ayear = date("Y");
+                                            $number = 1;
+                                            while ($row = $result->fetch_assoc()) {
+                                                echo "<tr class='user-row px-1 gap-1' data-user-id='{$row['user_id']}'>
+                                                        <td class='uppercase mx-auto'><input class='select-checkbox' type='checkbox' name='selected_students[]' value='{$row['user_id']}'></td>
+                                                        <td class='uppercase'>$number</td>
+                                                        <td class='uppercase'>$ayear</td>
+                                                        <td class='uppercase'>{$row['program']}</td>
+                                                        <td class='uppercase'>10</td>
+                                                        <td class='uppercase'>{$row['serial_number']}</td>
+                                                        <td class='uppercase'>{$row['last_name']}</td>
+                                                        <td class='uppercase'>{$row['first_name']}</td>
+                                                        <td class='uppercase'>{$row['middle_name']}</td>
+                                                        <td class='uppercase'>{$row['extension_name']}</td>
+                                                        <td class='uppercase'>{$row['birthday']}</td>
+                                                        <td class='uppercase'>{$row['sex']}</td>
+                                                        <td class='uppercase'>{$row['barangay']}</td>
+                                                        <td class='uppercase'>{$row['city']}</td>
+                                                        <td class='uppercase'>{$row['province']}</td>
+                                                        <td class='uppercase'>St. Michael's College of Iligan, Inc.</td>
+                                                        <td class='uppercase'>{$row['insti_code']}</td>
+                                                        <td class='uppercase'>Private</td>
+                                                        <td class='uppercase'>340101</td>
+                                                        <td class='uppercase'>{$row['course']}</td>
+                                                        <td class='uppercase'>{$row['email']}</td>
+                                                        <td class='uppercase'>{$row['contact_number']}</td>
+                                                    </tr>";
+                                                $number++;
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='15'>No data found</td></tr>";
+                                        }
+
+                                        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['prefix'], $_POST['selected_students'])) {
+                                            $prefix = $_POST['prefix'];
+                                            $selected_students = $_POST['selected_students']; // Array of checked students
+                                            $number_serial = 1;
+                                        
+                                            foreach ($selected_students as $user_id) {
+                                                // Generate the new serial number
+                                                $serial_number = str_replace('_', $number_serial, $prefix);
+                                        
+                                                // Update the serial number in the database
+                                                $update_sql = "UPDATE user SET serial_number = '$serial_number' WHERE user_id = '$user_id'";
+                                                $conn->query($update_sql);
+                                        
+                                                $number_serial++;
+                                            }
+                                        }
+                                    ?>
+                                </tbody>
+                                <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
+                            </table>
+                            <form action="" method="post">
+                        <button id="archiveRotcButton" class="bg-primary px-3 py-1 rounded-lg mt-5 text-white mb-5">Archive Records</button>
+                    </form>
+                    <?php endif; ?>
+                        </form>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -377,8 +640,52 @@ $_SESSION['last_activity'] = time();
 
     <script>
         $(document).ready(function() {
-            $('#student').DataTable({
+            $('#cwtsTable').DataTable({
                 dom: 'Bfrtip',
+                pageLength: 5, // Set default number of entries to display
+                lengthMenu: [5, 10, 25, 50, 100],
+                buttons: [
+                    <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
+                    'excel' // Only add "Excel" for nstp_coordinator
+                    <?php else: ?>
+                    // Empty array for all other user types
+                    []
+                    <?php endif; ?>
+                ],
+                language: {
+                    info: "Displaying _START_ to _END_ of _TOTAL_ entries", // Custom text for the entries display
+                    emptyTable: "No data available", // Text when the table is empty
+                    zeroRecords: "No matching records found" // Text when no records match
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $('#ltsTable').DataTable({
+                dom: 'Bfrtip',
+                pageLength: 5, // Set default number of entries to display
+                lengthMenu: [5, 10, 25, 50, 100],
+                buttons: [
+                    <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
+                    'excel' // Only add "Excel" for nstp_coordinator
+                    <?php else: ?>
+                    // Empty array for all other user types
+                    []
+                    <?php endif; ?>
+                ],
+                language: {
+                    info: "Displaying _START_ to _END_ of _TOTAL_ entries", // Custom text for the entries display
+                    emptyTable: "No data available", // Text when the table is empty
+                    zeroRecords: "No matching records found" // Text when no records match
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $('#rotcTable').DataTable({
+                dom: 'Bfrtip',
+                pageLength: 5, // Set default number of entries to display
+                lengthMenu: [5, 10, 25, 50, 100],
                 buttons: [
                     <?php if ($_SESSION['user_type'] == 'nstp_coordinator'): ?>
                     'excel' // Only add "Excel" for nstp_coordinator
@@ -427,26 +734,69 @@ $_SESSION['last_activity'] = time();
     </script>
 
     <script>
-        document.getElementById('archiveButton').addEventListener('click', function () {
-            if (confirm('Are you sure you want to archive these users?')) {
-                const rows = document.querySelectorAll('.user-row');
-                const userIds = Array.from(rows).map(row => row.getAttribute('data-user-id'));
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const studentCheckboxes = document.querySelectorAll('.select-checkbox');
 
-                fetch('archive_users.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userIds })
-                })
-                .then(response => response.text())
-                .then(data => {
-                    alert(data);
-                    location.reload(); // Reload the page to update the table
-                })
-                .catch(error => console.error('Error:', error));
-            }
+            selectAllCheckbox.addEventListener('change', function () {
+                studentCheckboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+            });
+
+            studentCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    if (!this.checked) {
+                        selectAllCheckbox.checked = false; // Uncheck "Select All" if any individual checkbox is unchecked
+                    } else if (document.querySelectorAll('.select-checkbox:checked').length === studentCheckboxes.length) {
+                        selectAllCheckbox.checked = true; // Check "Select All" if all individual checkboxes are checked
+                    }
+                });
+            });
         });
 
     </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function setupArchiveButton(buttonId, tableId, program) {
+                document.getElementById(buttonId).addEventListener('click', function (event) {
+                    event.preventDefault(); // Prevent form submission
+
+                    // Select checkboxes only from the specific table
+                    const selectedUsers = Array.from(document.querySelectorAll(`#${tableId} .select-checkbox:checked`))
+                        .map(checkbox => checkbox.value); // Get user IDs
+
+                    if (selectedUsers.length === 0) {
+                        alert(`No users selected for archiving in ${program}.`);
+                        return;
+                    }
+
+                    if (confirm(`Are you sure you want to archive the selected users in ${program}?`)) {
+                        fetch('archive_users.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ user_id: selectedUsers, program: program })
+                        })
+                        .then(response => response.text())
+                        .then(data => {
+                            alert(data);
+                            location.reload(); // Reload to update the table
+                        })
+                        .catch(error => console.error('Error:', error));
+                    }
+                });
+            }
+
+            // Set up archive buttons for each table
+            setupArchiveButton('archiveCwtsButton', 'cwtsTable', 'CWTS');
+            setupArchiveButton('archiveLtsButton', 'ltsTable', 'LTS');
+            setupArchiveButton('archiveRotcButton', 'rotcTable', 'ROTC');
+        });
+    </script>
+
+
 </body>
 
 </html>

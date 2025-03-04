@@ -36,7 +36,7 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
 $sql_sections = "SELECT u.*, GROUP_CONCAT(s.section_name SEPARATOR ', ') AS sections
         FROM user u
         LEFT JOIN section s ON u.user_id = s.faculty_id
-        WHERE u.user_type = 'faculty'
+        WHERE u.user_type = 'faculty' OR u.user_type = 'nstp_coordinator'
         GROUP BY u.user_id";
 $stmt = $conn->prepare($sql_sections);
 $stmt->execute();
@@ -48,6 +48,11 @@ $sql_sections2 = "SELECT section.section_id, section.section_name, section.sched
 $stmt2 = $conn->prepare($sql_sections2);
 $stmt2->execute();
 $sections_result2 = $stmt2->get_result();
+
+$course_select = "SELECT * FROM course";
+$stmt_course = $conn->prepare($course_select);
+$stmt_course->execute();
+$course_results = $stmt_course->get_result();
 
 if (isset($_POST['delete_section'])) {
     $section_id_to_delete = intval($_POST['section_id_to_delete']);
@@ -207,7 +212,7 @@ $_SESSION['last_activity'] = time();
                 </svg></a>
         </div>
 
-        <div class="flex h-screen w-full">
+        <div class="flex w-full">
         <?php include '../sidebar_faculty.php'; ?>
 
             <div class="flex-grow p-4 sm:ml-[230px] md:ml-[240px] lg:ml-[240px] xl:ml-[230px] xxl:ml-[180px]">
@@ -232,13 +237,14 @@ $_SESSION['last_activity'] = time();
                     </div>
 
                     <div class="bg-white p-2 rounded-md mt-8">
-                        <table id="student" class="display" style="width:100%">
-                            <thead>
+                        <table id="faculty" class="display" style="width:100%">
+                            <thead class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
                                 <tr>
                                     <th>First Name</th>
                                     <th>Middle Name</th>
                                     <th>Last Name</th>
                                     <th>Extension</th>
+                                    <th>Role</th>
                                     <th>Email</th>
                                     <th>Birthday</th>
                                     <th>Sex</th>
@@ -255,11 +261,12 @@ $_SESSION['last_activity'] = time();
                                 if ($sections_result->num_rows > 0) {
                                     while ($row = $sections_result->fetch_assoc()) {
 
-                                        echo "<tr>
+                                        echo "<tr class='text-gray-900' style='width:100%; border: 1px solid #ccc;'>
                                                 <td>{$row['first_name']}</td>
                                                 <td>{$row['middle_name']}</td>
                                                 <td>{$row['last_name']}</td>
                                                 <td>{$row['extension_name']}</td>
+                                                <td>{$row['user_type']}</td>
                                                 <td>{$row['email']}</td>
                                                 <td>{$row['birthday']}</td>
                                                 <td>{$row['sex']}</td>
@@ -297,7 +304,7 @@ $_SESSION['last_activity'] = time();
                     </div>
 
                     <div class="bg-white w-[80%] p-2 rounded-md mt-8 pb-10 mb-10">
-                        <table id="student" class="display" style="width:100%; border: 1px solid #ccc;">
+                        <table id="section" class="display" style="width:100%; border: 1px solid #ccc;">
                             <thead class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
                                 <tr>
                                     <th>Section</th>
@@ -338,6 +345,63 @@ $_SESSION['last_activity'] = time();
                         </table>
                     </div>
 
+                    <!-- Course -->
+                    <div class="mt-10">
+                        <h2 class="text-[24px]">Course</h2>
+                    </div>
+
+                    <div class="w-[20%] flex mb-8 gap-1">
+                        <a class="bg-primary py-3 text-center w-full rounded-full mt-8 hover:cursor-pointer hover:bg-red-700 flex justify-center" href="./new_course.php?section_id=<?php echo $section_id; ?>">
+                            <svg class="transition ease-linear duration-200 hover:text-primary mr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                    <path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z" />
+                                    <path d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z" />
+                                </g>
+                            </svg>
+                            Add new course
+                        </a>
+                    </div>
+
+                    <div class="bg-white w-[80%] p-2 rounded-md mt-8 pb-10 mb-10">
+                        <table id="course" class="display" style="width:100%; border: 1px solid #ccc;">
+                            <thead class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Name</th>
+                                    <th>Insitutional Code</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-900" style="width:100%; border: 1px solid #ccc;">
+                                <?php
+                                if ($course_results->num_rows > 0) {
+                                    while ($row = $course_results->fetch_assoc()) {
+                                        echo "<tr class='py-2' style='width:100%; border: 1px solid #ccc;'>
+                                                <td>{$row['course_id']}</td>
+                                                <td>{$row['name']}</td>
+                                                <td>{$row['insti_code']}</td>
+                                                <td class='text-center'>
+                                                    <a class='bg-yellow-400 text-white px-4 py-2 rounded hover:bg-yellow-500 transition inline-block text-center' href='./edit_course.php?course_id={$row['course_id']}&section_id={$section_id}'  style='min-width: 80px; display: inline-block;'>Edit</a>
+
+                                                    <form method='POST' style='display:inline-block;'>
+                                                        <input type='hidden' name='course_id_to_delete' value='" . $row['course_id'] . "'>
+                                                        <input type='hidden' name='delete_course' value='1'>
+                                                        <button type='submit' class='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition' 
+                                                                style='min-width: 80px; display: inline-block; text-align: center;' 
+                                                                onclick='return confirm(\"Are you sure you want to delete this course and its corresponding values?\");'>Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='15'>No data found</td></tr>";
+                                }
+
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -362,7 +426,29 @@ $_SESSION['last_activity'] = time();
 
     <script>
         $(document).ready(function() {
-            $('#student').DataTable({
+            $('#faculty').DataTable({
+                dom: 'frtip',
+                language: {
+                    info: "Displaying _START_ to _END_ of _TOTAL_ entries", // Custom text for the entries display
+                    emptyTable: "No data available", // Text when the table is empty
+                    zeroRecords: "No matching records found", // Text when no records match
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $('#section').DataTable({
+                dom: 'frtip',
+                language: {
+                    info: "Displaying _START_ to _END_ of _TOTAL_ entries", // Custom text for the entries display
+                    emptyTable: "No data available", // Text when the table is empty
+                    zeroRecords: "No matching records found", // Text when no records match
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $('#course').DataTable({
                 dom: 'frtip',
                 language: {
                     info: "Displaying _START_ to _END_ of _TOTAL_ entries", // Custom text for the entries display
